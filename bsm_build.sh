@@ -25,9 +25,17 @@ function install_deps() {
     mkdir -p ${BUILD_DIR}
   fi
 
-  cd ${BUILD_DIR}
+  pushd ${BUILD_DIR} > /dev/null
   conan install ${ROOT}/conanfile.txt
-  cd ${ROOT}
+  popd > /dev/null
+}
+
+function set_compile_link() {
+  if [[ ! -L ${ROOT}/compile_commands.json ]]; then
+    # Symlink compile_commands.json artefact to project ROOT
+    # This sets LSP definitions for clangd.
+    ln -s ${BUILD_DIR}/compile_commands.json ${ROOT}
+  fi
 }
 
 function build() {
@@ -38,6 +46,8 @@ function build() {
 
   cmake -S ${ROOT} -B ${BUILD_DIR}
   cmake --build ${BUILD_DIR}
+
+  set_compile_link
 }
 
 function parse_args() {
