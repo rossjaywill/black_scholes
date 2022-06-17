@@ -8,10 +8,22 @@
 
 namespace bsm
 {
+
+enum class Flag : char {
+    OptionType = 'o',
+    Underlying = 'u',
+    Strike     = 's',
+    Expiry     = 't',
+    Volatility = 'v',
+    Interest   = 'r',
+};
+
 using Args = std::vector<std::string>;
-using ArgLookup = std::unordered_map<std::string, char>;
+using ArgLookup = std::unordered_map<std::string, Flag>;
 using Parser       = std::function<void(std::string_view)>;
-using ParserLookup = std::unordered_map<char, Parser>;
+using ParserLookup = std::unordered_map<Flag, Parser>;
+using OptionMap    = std::unordered_map<Flag, std::string>;
+using ArgKeys      = std::vector<Flag>;
 
 const Args baseOpts {
     "-o", "-u", "-s", "-t",
@@ -23,38 +35,23 @@ const Args addOpts {
 };
 
 ArgLookup paramLookup {
-    { "-o",                 'o' },
-    { "--option-type",      'o' },
-    { "-u",                 'u' },
-    { "--underlying-price", 'u' },
-    { "-s",                 's' },
-    { "--strike-price",     's' },
-    { "-t",                 't' },
-    { "--time-to-expiry",   't' },
-    { "-v",                 'v' },
-    { "--volatility",       'v' },
-    { "-r",                 'r' },
-    { "--rate-of-interest", 'r' },
+    { "-o",                 Flag::OptionType },
+    { "--option-type",      Flag::OptionType },
+    { "-u",                 Flag::Underlying },
+    { "--underlying-price", Flag::Underlying },
+    { "-s",                 Flag::Strike },
+    { "--strike-price",     Flag::Strike },
+    { "-t",                 Flag::Expiry },
+    { "--time-to-expiry",   Flag::Expiry },
+    { "-v",                 Flag::Volatility },
+    { "--volatility",       Flag::Volatility },
+    { "-r",                 Flag::Interest },
+    { "--rate-of-interest", Flag::Interest },
 };
 
-const auto parseOptionType = [](std::string_view input) {  };
-const auto parsePrice      = [](std::string_view input) {  };
-const auto parseDecimal    = [](std::string_view input) {  };
-const auto parseSymbol     = [](std::string_view input) {  };
-const auto parseDate       = [](std::string_view input) {  };
-
-ParserLookup parsers {
-    { 'o', parseOptionType },
-    { 'u', parseSymbol },
-    { 's', parsePrice },
-    { 't', parseDate },
-    { 'r', parseDecimal },
-    { 'v', parseDecimal },
-};
-
-const auto NUM_BASE_ARGS = baseOpts.size() / 2;
-const auto NUM_ADDL_ARGS = addOpts.size() / 2;
-const auto NUM_ALL_ARGS  = NUM_BASE_ARGS + NUM_ADDL_ARGS;
+const auto NUM_BASE_FLAGS = baseOpts.size() / 2;
+const auto NUM_ADDL_FLAGS = addOpts.size() / 2;
+const auto NUM_ALL_FLAGS  = NUM_BASE_FLAGS + NUM_ADDL_FLAGS;
 
 constexpr const auto EULER_NUM  = 2.71828182845904523536;
 constexpr const auto IMPIED_VOL = 0.18;

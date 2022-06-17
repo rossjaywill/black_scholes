@@ -9,7 +9,9 @@ NAME="black_scholes"
 
 function usage() {
   echo "
-    -d | --install-deps   Install conan dependencies before building
+    -d | --debug          Debug build
+    -t | --toolchain      Specify which compiler toolchain to use (gcc/clang)
+    -i | --install-deps   Install conan dependencies before building
     -c | --clean          Clean build artefacts
     -r | --rebuild        Clean build artefacts before fully rebuilding
     -h | --help           Display this help message
@@ -44,16 +46,28 @@ function build() {
     install_deps
   fi
 
-  cmake -S ${ROOT} -B ${BUILD_DIR}
+  local build_type="Release"
+  if [[ "${BUILD_TYPE,,}" == "debug" ]]; then
+    build_type="Debug"
+  fi
+
+  # CXX=${CXX} cmake -S ${ROOT} -B ${BUILD_DIR} -DCMAKE_BUILD_TYPE="${build_type}"
+  # CXX=${CXX} cmake --build ${BUILD_DIR}
+  cmake -S ${ROOT} -B ${BUILD_DIR} -DCMAKE_BUILD_TYPE="${build_type}"
   cmake --build ${BUILD_DIR}
 
   set_compile_link
 }
 
 function parse_args() {
-  if [[ $# -gt 0 ]]; then
-    case $1 in
-      -d|--install-deps)
+  while test $#  -gt 0; do
+  case "$1" in
+      -d|--debug)
+        echo "-- Creating debug build... --"
+        export BUILD_TYPE="debug"
+        shift
+        ;;
+      -i|--install-deps)
         echo "-- Installing conan dependencies... --"
         install_deps
         exit 0
@@ -67,14 +81,31 @@ function parse_args() {
         echo "-- Fully rebuilding ${NAME}... --"
         clean
         install_deps
+        shift
+        ;;
+      -t|--toolchain)
+        if test $# -gt 1; then
+          echo "-- Building with toolchain: $2... --"
+          if [[ $2 == "clang" ]]; then
+            export CXX="clang++"
+          fi
+        else
+          echo "No toolchain specified, please choose either 'gcc' or 'clang'"
+          usage
+          exit 1
+        fi
+        shift 2
         ;;
       -h|--help|*)
         usage
         exit 1
         ;;
     esac
-  fi
+  done
 }
+
+export BUILD_TYPE="Release"
+export CXX="gcc"
 
 parse_args $@
 build

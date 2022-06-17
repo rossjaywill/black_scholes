@@ -8,6 +8,7 @@
 namespace bsm
 {
 
+template<typename CallPut = CallOption>
 class BlackScholes
 {
 public:

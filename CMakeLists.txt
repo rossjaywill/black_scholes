@@ -13,7 +13,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_subdirectory(tst)
 
-add_executable(bsm src/main.cpp)
+add_executable(bsm bsm/main.cpp)
 target_include_directories(bsm PRIVATE include)
 target_link_libraries(bsm ${CONAN_LIBS})
 target_compile_features(bsm PUBLIC cxx_std_20)
