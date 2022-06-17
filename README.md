@@ -19,14 +19,14 @@ $$d_2 = d_1 - σ_s . \sqrt{t}$$
 
 Where:
 
-| Term | Definition |
-| ----------- | ----------- |
-| C | Call Option Price |
-| P | Put Option Price |
-| S | Underlying Asset |
-| K | Strike |
-| r | Interest Rate (Risk Free) |
-| t | Time to expiry |
-| N | Normal Distribution |
-| σ | Std. Dv. Log Returns (Implied Volatility) |
+| Term | Flag | Definition |
+| --- | ---- |  ------------- |
+| C | - | Call Option Price |
+| P | - | Put Option Price |
+| S | -u | Underlying Asset |
+| K | -s | Strike |
+| r | -r | Interest Rate (Risk Free) |
+| t | -t | Time to expiry |
+| N | - | Normal Distribution |
+| σ | - | Std. Dv. Log Returns (Implied Volatility) |
 
