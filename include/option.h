@@ -3,6 +3,8 @@
 
 #include <cstdint>
 
+#include <fmt/core.h>
+
 namespace bsm
 {
 
@@ -29,22 +31,36 @@ public:
         , volatility_(volatility)
         , riskFreeInterest_(rate)
         , timeToExpiry_(time)
-        {}
+        {
+            fmt::print("Constructed option with:\n"
+                "flag: {}\n"
+                "underlying: {}\n"
+                "strike: {}\n"
+                "time: {}\n"
+                "volatility: {}\n"
+                "rate: {}\n",
+                optionType_ == CallPutFlag::Call ? "Call" : "Put",
+                underlyingPrice_,
+                strikePrice_,
+                timeToExpiry_,
+                volatility_,
+                riskFreeInterest_);
+        }
 
     auto optionType()       { return optionType_; }
     auto underlyingPrice()  { return underlyingPrice_; }
     auto strikePrice()      { return strikePrice_; }
+    auto timeToExpiry()     { return timeToExpiry_; }
     auto volatility()       { return volatility_; }
     auto riskFreeInterest() { return riskFreeInterest_; }
-    auto timeToExpiry()     { return timeToExpiry_; }
 
 private:
     CallPutFlag optionType_       = CallPutFlag::Call;
     value_type  underlyingPrice_  = 0.0;
     value_type  strikePrice_      = 0.0;
+    uint32_t    timeToExpiry_     = 0;
     value_type  volatility_       = 0.0;
     value_type  riskFreeInterest_ = 0.0;
-    uint32_t    timeToExpiry_     = 0;
 };
 
 } // bsm

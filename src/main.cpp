@@ -95,23 +95,28 @@ int main(int argc, char **argv)
 {
     fmt::print("Running black scholes merton algorithm: {}\n", bsm::EULER_NUM);
     OptionMap arguments;
-    const bsm::Args params { argv + 1, argv + argc };
+    try {
+        const bsm::Args params { argv + 1, argv + argc };
 
-    populateArgs(params, arguments);
+        populateArgs(params, arguments);
 
-    for (const auto &arg : arguments) {
-        fmt::print("arg key: {}, value: {}\n", arg.first, arg.second);
+        for (const auto &arg : arguments) {
+            fmt::print("arg key: {}, value: {}\n", arg.first, arg.second);
+        }
+
+        const auto optionType = (arguments['o'] == "call") ? CallPutFlag::Call : CallPutFlag::Put;
+        const auto underlying = std::stod(arguments['u']);
+        const auto strike = std::stod(arguments['s']);
+        const auto expiry = static_cast<uint32_t>(std::stoi(arguments['t']));
+        const auto interest = std::stod(arguments['r']);
+        const auto volatility = std::stod(arguments['v']);
+
+        Option<> option(optionType, underlying, strike, expiry, interest, volatility);
+        // const auto optType = args['o'] == "call" ? CallPutFlag::Call : CallPutFlag::Put;
+        // bsm::BlackScholes<>();
     }
-
-    const auto optionType = (arguments['o'] == "call") ? CallPutFlag::Call : CallPutFlag::Put;
-    const auto underlying = std::stod(arguments['u']);
-    const auto strike = std::stod(arguments['s']);
-    const auto expiry = static_cast<uint32_t>(std::stoi(arguments['t']));
-    const auto interest = std::stod(arguments['r']);
-    const auto volatility = std::stod(arguments['v']);
-
-    Option<> option(optionType, underlying, strike, expiry, interest, volatility);
-    // const auto optType = args['o'] == "call" ? CallPutFlag::Call : CallPutFlag::Put;
-    // bsm::BlackScholes<>();
+    catch (const std::exception &e) {
+        fmt::print("Exeception caught during bsm run:\n{}", e.what());
+    }
     return 0;
 }
