@@ -5,6 +5,7 @@ Options Pricing
 ### Formulae
 
 $$C = S_t . N(d_1) - Ke^-rt . N(d_2)$$
+
 $$P = Ke^-rt . N(-d_2) - S_t . N(-d_1)$$
 
 
