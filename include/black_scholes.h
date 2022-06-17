@@ -5,10 +5,9 @@
 
 #include <vector>
 
-namespace black_scholes
+namespace bsm
 {
 
-template <typename OptionType>
 class BlackScholes
 {
 public:
@@ -19,6 +18,6 @@ private:
     std::vector<Option<double>> options_;
 };
 
-} // black_scholes
+} // bsm
 
 #endif

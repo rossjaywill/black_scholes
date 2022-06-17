@@ -2,9 +2,10 @@
 Black Scholes Merton -
 Options Pricing
 
-### Formula
+### Formulae
 
-$$C = S_t . N*(d_1) - Ke^-rt . N(d_2)$$
+$$C = S_t . N(d_1) - Ke^-rt . N(d_2)$$
+$$P = Ke^-rt . N(-d_2) - S_t . N(-d_1)$$
 
 
 Given:
@@ -15,11 +16,12 @@ and
 
 $$d_2 = d_1 - σ_s . \sqrt{t}$$
 
-and where:
+Where:
 
 | Term | Definition |
 | ----------- | ----------- |
-| C | Option Price |
+| C | Call Option Price |
+| P | Put Option Price |
 | S | Underlying Asset |
 | K | Strike |
 | r | Interest Rate (Risk Free) |

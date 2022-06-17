@@ -3,7 +3,7 @@
 
 #include <cstdint>
 
-namespace black_scholes
+namespace bsm
 {
 
 enum class CallPutFlag
@@ -12,16 +12,17 @@ enum class CallPutFlag
     Put
 };
 
-template <typename RealType = double>
+template <typename value_type = double>
 class Option
 {
+public:
     Option() = delete;
-    explicit Option(CallPutFlag flag       = CallPutFlag::Call,
-                     RealType   underlying = 0.0,
-                     RealType   strike     = 0.0,
-                     RealType   volatility = 0.0,
-                     RealType   rate       = 0.0,
-                     uint32_t   time       = 0)
+    explicit Option(CallPutFlag flag         = CallPutFlag::Call,
+                     value_type underlying   = 0.0,
+                     value_type strike       = 0.0,
+                     uint32_t   time         = 0,
+                     value_type volatility   = 0.0,
+                     value_type rate         = 0.0)
         : optionType_(flag)
         , underlyingPrice_(underlying)
         , strikePrice_(strike)
@@ -39,13 +40,13 @@ class Option
 
 private:
     CallPutFlag optionType_       = CallPutFlag::Call;
-    RealType    underlyingPrice_  = 0.0;
-    RealType    strikePrice_      = 0.0;
-    RealType    volatility_       = 0.0;
-    RealType    riskFreeInterest_ = 0.0;
+    value_type  underlyingPrice_  = 0.0;
+    value_type  strikePrice_      = 0.0;
+    value_type  volatility_       = 0.0;
+    value_type  riskFreeInterest_ = 0.0;
     uint32_t    timeToExpiry_     = 0;
 };
 
-} // black_scholes
+} // bsm
 
 #endif
