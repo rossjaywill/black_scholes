@@ -7,8 +7,19 @@
 namespace bsm
 {
 
-struct CallOption{};
-struct PutOption{};
+struct CallOption
+{
+    void operator() () {
+        fmt::print("CallOption invoker called!");
+    }
+};
+
+struct PutOption
+{
+    void operator()() {
+        fmt::print("PutOption invoker called!");
+    }
+};
 
 template <typename CallPut = CallOption, typename value_type = double>
 class Option
@@ -39,9 +50,9 @@ public:
             riskFreeInterest_);
     }
 
-    template<CallPut>
     void operator()() {
-
+        CallPut invoker;
+        invoker();
     }
 
     const auto &underlyingPrice()  const { return underlyingPrice_; }

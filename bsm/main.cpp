@@ -111,7 +111,8 @@ int main(int argc, char **argv)
         const auto volatility = std::stod(arguments[Flag::Volatility]);
 
         Option<OptionType, double> option(underlying, strike, expiry, interest, volatility);
-    }
+        option();
+   }
     catch (const std::exception &e) {
         fmt::print("Exeception caught during bsm run:\n{}", e.what());
     }
