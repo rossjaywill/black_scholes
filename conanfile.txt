@@ -1,6 +1,6 @@
 [requires]
-fmt/8.1.1
-catch2/2.13.9
+fmt/[>8.0.0]
+catch2/[>2.13.0,<3.0.0]
 
 [generators]
 cmake

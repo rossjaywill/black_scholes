@@ -28,7 +28,7 @@ function install_deps() {
   fi
 
   pushd ${BUILD_DIR} > /dev/null
-  conan install ${ROOT}/conanfile.txt
+  conan install ${ROOT}/conanfile.txt --build -s compiler=${CCOMPILER} -s compiler.version=${CVERSION}
   popd > /dev/null
 }
 
@@ -40,20 +40,28 @@ function set_compile_link() {
   fi
 }
 
+function set_build_env() {
+  if [[ "${BUILD_TYPE,,}" == "debug" ]]; then
+    export BUILD_TYPE="Debug"
+  fi
+
+  if [[ "${CXX,,}" == "clang" ]]; then
+    export CXX="clang++"
+    export CCOMPILER="clang"
+  fi
+
+  echo "exiting set build env with: ${BUILD_TYPE} and ${CCOMPILER}"
+}
+
 function build() {
+  echo "entering build with: ${BUILD_TYPE} and ${CCOMPILER}"
+
   if [[ ! -f ${BUILD_DIR}/conanbuildinfo.txt ]]; then
     echo "-- No conan packages found. Installing now... --"
     install_deps
   fi
 
-  local build_type="Release"
-  if [[ "${BUILD_TYPE,,}" == "debug" ]]; then
-    build_type="Debug"
-  fi
-
-  # CXX=${CXX} cmake -S ${ROOT} -B ${BUILD_DIR} -DCMAKE_BUILD_TYPE="${build_type}"
-  # CXX=${CXX} cmake --build ${BUILD_DIR}
-  cmake -S ${ROOT} -B ${BUILD_DIR} -DCMAKE_BUILD_TYPE="${build_type}"
+  cmake -S ${ROOT} -B ${BUILD_DIR} -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" -DCMAKE_CXX_COMPILER=${CXX}
   cmake --build ${BUILD_DIR}
 
   set_compile_link
@@ -80,14 +88,15 @@ function parse_args() {
       -r|--rebuild)
         echo "-- Fully rebuilding ${NAME}... --"
         clean
-        install_deps
         shift
         ;;
       -t|--toolchain)
         if test $# -gt 1; then
           echo "-- Building with toolchain: $2... --"
           if [[ $2 == "clang" ]]; then
+            export CCOMPILER="clang"
             export CXX="clang++"
+            export CVERSION="14"
           fi
         else
           echo "No toolchain specified, please choose either 'gcc' or 'clang'"
@@ -105,7 +114,10 @@ function parse_args() {
 }
 
 export BUILD_TYPE="Release"
-export CXX="gcc"
+export CXX="g++"
+export CCOMPILER="gcc"
+export CVERSION="11.2"
 
 parse_args $@
+set_build_env
 build
