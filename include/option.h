@@ -12,20 +12,18 @@ namespace bsm
 struct CallOption
 {
     template<typename value_type>
-    void operator()(value_type underlying, value_type strike, value_type interest, value_type volatility, uint32_t expiry) {
+    auto operator()(value_type underlying, value_type strike, value_type interest, value_type volatility, uint32_t expiry) {
         BlackScholes<double> bsm;
-        auto c = bsm.callOption(underlying, strike, interest, volatility, expiry);
-        fmt::print("Call Option Value: {}\n", c);
+        return bsm.callOptionValue(underlying, strike, interest, volatility, expiry);
     }
 };
 
 struct PutOption
 {
     template<typename value_type>
-    void operator()(value_type underlying, value_type strike, value_type interest, value_type volatility, uint32_t expiry) {
+    auto operator()(value_type underlying, value_type strike, value_type interest, value_type volatility, uint32_t expiry) {
         BlackScholes<double> bsm;
-        auto p =bsm.putOption(underlying, strike, interest, volatility, expiry);
-        fmt::print("Put Option Value: {}\n", p);
+        return bsm.putOptionValue(underlying, strike, interest, volatility, expiry);
     }
 };
 
@@ -58,9 +56,9 @@ public:
             riskFreeInterest_);
     }
 
-    void operator()() {
+    auto operator()() {
         CallPut invoker;
-        invoker(underlyingPrice_, strikePrice_, riskFreeInterest_, volatility_, timeToExpiry_);
+        return invoker(underlyingPrice_, strikePrice_, riskFreeInterest_, volatility_, timeToExpiry_);
     }
 
     const auto &underlyingPrice()  const { return underlyingPrice_; }

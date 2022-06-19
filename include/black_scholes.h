@@ -13,16 +13,15 @@ class BlackScholes
 {
 public:
     BlackScholes() = default;
-    auto valueAtExpiry();
 
-    value_type callOption(value_type underlying, value_type strike, value_type interest, value_type volatility, uint32_t expiry) {
+    value_type callOptionValue(value_type underlying, value_type strike, value_type interest, value_type volatility, uint32_t expiry) {
         auto dOne = d1(underlying, strike, interest, volatility, expiry);
         auto returnProb = returnsProbability(underlying, dOne);
         auto costProb = costProbability(strike, interest, expiry, d2(dOne, volatility, expiry));
         return returnProb - costProb;
     }
 
-    value_type putOption(value_type underlying, value_type strike, value_type interest, value_type volatility, uint32_t expiry) {
+    value_type putOptionValue(value_type underlying, value_type strike, value_type interest, value_type volatility, uint32_t expiry) {
         auto dOne = d1(underlying, strike, interest, volatility, expiry);
         auto costProb = costProbability(strike, interest, expiry, -d2(dOne, volatility, expiry));
         auto returnProb = returnsProbability(underlying, -dOne);

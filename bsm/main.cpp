@@ -5,6 +5,7 @@
 #include <set>
 #include <fmt/core.h>
 
+#include "arg_parse.h"
 #include "constants.h"
 #include "option.h"
 
@@ -30,61 +31,6 @@ void displayHelp()
     exit(code);
 }
 
-void validateFlags(const Args &flags, OptionMap &options)
-{
-    Args fullOpts = baseOpts;
-    for (const auto &opt : addOpts) {
-        fullOpts.push_back(opt);
-    }
-
-    const auto withinBase = [&](std::string_view arg) { return std::find(baseOpts.begin(), baseOpts.end(), arg) != baseOpts.end(); };
-    const auto withinAll  = [&](std::string_view arg) { return std::find(fullOpts.begin(), fullOpts.end(), arg) != fullOpts.end(); };
-
-    if (std::any_of(flags.begin(), flags.end(), [](std::string_view arg) {
-                return (arg == "-h" || arg == "--help");
-            })) {
-        helpAndExit(0);
-    }
-    else if (flags.size() == NUM_BASE_FLAGS) {
-        if (!std::all_of(flags.begin(), flags.end(), withinBase)) {
-            helpAndExit(1);
-        }
-        else {
-            options[Flag::Interest] = std::to_string(INTEREST);
-            options[Flag::Volatility] = std::to_string(IMPIED_VOL);
-        }
-    }
-    else if (flags.size() == NUM_ALL_FLAGS) {
-        if (!std::all_of(flags.begin(), flags.end(), withinAll)) {
-            helpAndExit(1);
-        }
-    }
-    else {
-        helpAndExit(1);
-    }
-}
-
-void populateArgs(const Args &params, OptionMap &options)
-{
-    Args flags;
-    for (const auto &param : params) {
-        if (param.find_first_of("-") == 0) {
-            flags.push_back(param);
-        }
-    }
-
-    validateFlags(flags, options);
-
-    for (size_t i = 0; i < params.size(); ++i) {
-        const auto &in = params[i];
-        if (std::find(in.cbegin(), in.cend(), '-') != in.end()) {
-            if (paramLookup.contains(in)) {
-                options[paramLookup[in]] = params[i + 1];
-            }
-        }
-    }
-}
-
 int main(int argc, char **argv)
 {
     OptionMap arguments;
@@ -92,7 +38,9 @@ int main(int argc, char **argv)
         fmt::print("Running black scholes merton\n");
 
         const Args params { argv + 1, argv + argc };
-        populateArgs(params, arguments);
+        if (!populateArgs(params, arguments)) {
+            return 1;
+        }
 
         const auto underlying = std::stod(arguments[Flag::Underlying]);
         const auto strike = std::stod(arguments[Flag::Strike]);
@@ -102,15 +50,18 @@ int main(int argc, char **argv)
 
         if (arguments[Flag::OptionType] == "call") {
             Option<CallOption, double> call(underlying, strike, expiry, interest, volatility);
-            call();
+            auto value = call();
+            fmt::print("Call Option Value: {}\n", value);
         }
         else {
             Option<PutOption, double> put(underlying, strike, expiry, interest, volatility);
-            put();
+            auto value = put();
+            fmt::print("Put Option Value: {}\n", value);
         }
     }
     catch (const std::exception &e) {
         fmt::print("Exeception caught during bsm run:\n{}", e.what());
+        return 1;
     }
     return 0;
 }
