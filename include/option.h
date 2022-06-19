@@ -1,6 +1,8 @@
 #ifndef OPTION_H
 #define OPTION_H
 
+#include "black_scholes.h"
+
 #include <cstdint>
 #include <fmt/core.h>
 
@@ -9,15 +11,21 @@ namespace bsm
 
 struct CallOption
 {
-    void operator() () {
-        fmt::print("CallOption invoker called!");
+    template<typename value_type>
+    void operator()(value_type underlying, value_type strike, value_type interest, value_type volatility, uint32_t expiry) {
+        BlackScholes<double> bsm;
+        auto c = bsm.callOption(underlying, strike, interest, volatility, expiry);
+        fmt::print("Call Option Value: {}\n", c);
     }
 };
 
 struct PutOption
 {
-    void operator()() {
-        fmt::print("PutOption invoker called!");
+    template<typename value_type>
+    void operator()(value_type underlying, value_type strike, value_type interest, value_type volatility, uint32_t expiry) {
+        BlackScholes<double> bsm;
+        auto p =bsm.putOption(underlying, strike, interest, volatility, expiry);
+        fmt::print("Put Option Value: {}\n", p);
     }
 };
 
@@ -33,9 +41,9 @@ public:
                     value_type rate         = 0.0)
         : underlyingPrice_(underlying)
         , strikePrice_(strike)
+        , timeToExpiry_(time)
         , volatility_(volatility)
         , riskFreeInterest_(rate)
-        , timeToExpiry_(time)
     {
         fmt::print("Constructed option with:\n"
             "underlying: {}\n"
@@ -52,7 +60,7 @@ public:
 
     void operator()() {
         CallPut invoker;
-        invoker();
+        invoker(underlyingPrice_, strikePrice_, riskFreeInterest_, volatility_, timeToExpiry_);
     }
 
     const auto &underlyingPrice()  const { return underlyingPrice_; }

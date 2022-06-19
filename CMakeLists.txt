@@ -11,9 +11,13 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -std=c++20 -Og -ggdb -Wall -Wextra")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -std=c++20 -O3 -Wall -Wextra")
+
 add_subdirectory(tst)
 
 add_executable(bsm bsm/main.cpp)
 target_include_directories(bsm PRIVATE include)
 target_link_libraries(bsm ${CONAN_LIBS})
 target_compile_features(bsm PUBLIC cxx_std_20)
+

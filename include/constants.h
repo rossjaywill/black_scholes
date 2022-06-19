@@ -18,8 +18,8 @@ enum class Flag : char {
     Interest   = 'r',
 };
 
-using Args = std::vector<std::string>;
-using ArgLookup = std::unordered_map<std::string, Flag>;
+using Args         = std::vector<std::string>;
+using ArgLookup    = std::unordered_map<std::string, Flag>;
 using Parser       = std::function<void(std::string_view)>;
 using ParserLookup = std::unordered_map<Flag, Parser>;
 using OptionMap    = std::unordered_map<Flag, std::string>;
@@ -53,7 +53,6 @@ const auto NUM_BASE_FLAGS = baseOpts.size() / 2;
 const auto NUM_ADDL_FLAGS = addOpts.size() / 2;
 const auto NUM_ALL_FLAGS  = NUM_BASE_FLAGS + NUM_ADDL_FLAGS;
 
-constexpr const auto EULER_NUM  = 2.71828182845904523536;
 constexpr const auto IMPIED_VOL = 0.18;
 constexpr const auto INTEREST   = 0.02;
 

@@ -5,7 +5,6 @@
 #include <set>
 #include <fmt/core.h>
 
-#include "black_scholes.h"
 #include "constants.h"
 #include "option.h"
 
@@ -90,19 +89,10 @@ int main(int argc, char **argv)
 {
     OptionMap arguments;
     try {
-        fmt::print("Running black scholes merton: {}\n", EULER_NUM);
+        fmt::print("Running black scholes merton\n");
 
         const Args params { argv + 1, argv + argc };
         populateArgs(params, arguments);
-
-        // const auto optionType = (arguments[Flag::OptionType] == "call") ? CallOption{} : PutOption{};
-        using OptionType = CallOption;
-        if (arguments[Flag::OptionType] == "call") {
-            using OptionType = CallOption;
-        }
-        else {
-            using OptionType = PutOption;
-        }
 
         const auto underlying = std::stod(arguments[Flag::Underlying]);
         const auto strike = std::stod(arguments[Flag::Strike]);
@@ -110,9 +100,15 @@ int main(int argc, char **argv)
         const auto interest = std::stod(arguments[Flag::Interest]);
         const auto volatility = std::stod(arguments[Flag::Volatility]);
 
-        Option<OptionType, double> option(underlying, strike, expiry, interest, volatility);
-        option();
-   }
+        if (arguments[Flag::OptionType] == "call") {
+            Option<CallOption, double> call(underlying, strike, expiry, interest, volatility);
+            call();
+        }
+        else {
+            Option<PutOption, double> put(underlying, strike, expiry, interest, volatility);
+            put();
+        }
+    }
     catch (const std::exception &e) {
         fmt::print("Exeception caught during bsm run:\n{}", e.what());
     }
