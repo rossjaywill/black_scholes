@@ -1,13 +1,18 @@
 #ifndef OPTION_H
 #define OPTION_H
 
-#include "black_scholes.h"
-
 #include <cstdint>
-#include <fmt/core.h>
+
+#include "black_scholes.h"
 
 namespace bsm
 {
+
+enum class OptionType
+{
+    Call,
+    Put,
+};
 
 template <typename value_type = double>
 struct OptionValues

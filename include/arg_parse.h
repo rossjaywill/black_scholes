@@ -1,9 +1,15 @@
+#include <chrono>
 #include <functional>
+#include <iomanip>
+#include <iostream>
+#include <stdexcept>
 #include <string>
+#include <sstream>
 #include <unordered_map>
 #include <vector>
 
 #include "constants.h"
+#include "option.h"
 
 namespace bsm
 {
@@ -28,7 +34,7 @@ class ArgParser
 {
 public:
     ArgParser() = default;
-    bool populateArgs(const Args &params, OptionMap &options)
+    bool populateArgs(const Args &params)
     {
         Args flags;
         for (const auto &param : params) {
@@ -37,7 +43,7 @@ public:
             }
         }
 
-        if (!validateFlags(flags, options)) {
+        if (!validateFlags(flags)) {
             return false;
         }
 
@@ -45,7 +51,7 @@ public:
             const auto &in = params[i];
             if (std::find(in.cbegin(), in.cend(), '-') != in.end()) {
                 if (paramLookup.contains(in)) {
-                    options[paramLookup[in]] = params[i + 1];
+                    arguments_[paramLookup[in]] = params[i + 1];
                 }
             }
         }
@@ -53,13 +59,59 @@ public:
         return true;
     }
 
+    OptionValues<double> getOptionValues() {
+        const auto underlying = std::stod(arguments_[Flag::Underlying]);
+        const auto strike     = std::stod(arguments_[Flag::Strike]);
+        const auto expiry     = parseDate(arguments_[Flag::Expiry]);
+        const auto volatility = std::stod(arguments_[Flag::Volatility]);
+        const auto interest   = std::stod(arguments_[Flag::Interest]);
+
+        return OptionValues<double> { underlying, strike, expiry, volatility, interest };
+    }
+
+    OptionType getOptionType() {
+        if (arguments_[Flag::OptionType] == "call") {
+            return OptionType::Call;
+        }
+        return OptionType::Put;
+    }
+
+    size_t getNumberArgs() { return arguments_.size(); }
+
 private:
-    bool validateFlags(const Args &flags, OptionMap &options)
+    // Parse input dates in format: 'YYYY-mm-dd'
+    uint32_t parseDate(std::string_view date) {
+        using namespace std::chrono;
+        // TODO RJW: Reimplement when libc++std updated
+        // std::chrono::from_stream(std::stringstream(std::string(date)), "%Y-%m-%d", ymd);
+
+        auto setToMidnight = [](std::tm &time) { time.tm_hour = 0; time.tm_min = 0; time.tm_sec = 0; };
+        auto getDaysDelta  = [](double diff) { return static_cast<uint32_t>((((diff / 60) / 60) / 24)); };
+
+        const std::time_t now = std::time(nullptr);
+        std::tm inTime;
+        std::tm* nowLocal = std::localtime(&now);
+
+        std::stringstream ss(date.data());
+        ss >> std::get_time(&inTime, "%Y-%m-%d");
+        setToMidnight(inTime);
+        setToMidnight(*nowLocal);
+
+        const std::time_t expiry = std::mktime(&inTime);
+        const std::time_t current = std::mktime(nowLocal);
+
+        if (current > expiry) {
+            throw std::runtime_error("Option has already expired, please enter a valid date");
+        }
+
+        auto diff = std::difftime(expiry, current);
+        return getDaysDelta(diff);
+    }
+
+    bool validateFlags(const Args &flags)
     {
         Args fullOpts = baseOpts;
-        for (const auto &opt : addOpts) {
-            fullOpts.push_back(opt);
-        }
+        for (const auto &opt : addOpts) { fullOpts.push_back(opt); }
 
         const auto withinBase = [&](std::string_view arg) { return std::find(baseOpts.begin(), baseOpts.end(), arg) != baseOpts.end(); };
         const auto withinAll  = [&](std::string_view arg) { return std::find(fullOpts.begin(), fullOpts.end(), arg) != fullOpts.end(); };
@@ -74,8 +126,8 @@ private:
                 return false;
             }
             else {
-                options[Flag::Interest] = std::to_string(INTEREST);
-                options[Flag::Volatility] = std::to_string(IMPIED_VOL);
+                arguments_[Flag::Interest] = std::to_string(INTEREST);
+                arguments_[Flag::Volatility] = std::to_string(IMPIED_VOL);
             }
         }
         else if (flags.size() == NUM_ALL_FLAGS) {
@@ -117,6 +169,8 @@ private:
     const uint32_t NUM_BASE_FLAGS = baseOpts.size() / 2;
     const uint32_t NUM_ADDL_FLAGS = addOpts.size() / 2;
     const uint32_t NUM_ALL_FLAGS  = NUM_BASE_FLAGS + NUM_ADDL_FLAGS;
+
+    OptionMap arguments_;
 };
 
 } //bsm

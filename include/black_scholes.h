@@ -2,8 +2,6 @@
 #define BLACK_SCHOLES_H
 
 #include <cmath>
-#include <cstdint>
-#include <vector>
 
 namespace bsm
 {

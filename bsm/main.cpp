@@ -1,8 +1,3 @@
-#include <array>
-#include <algorithm>
-#include <cctype>
-#include <iostream>
-#include <set>
 #include <fmt/core.h>
 
 #include "arg_parse.h"
@@ -34,29 +29,23 @@ void displayHelp()
 int main(int argc, char **argv)
 {
     ArgParser parser;
-    OptionMap arguments;
     try {
         fmt::print("Running black scholes merton\n");
 
         const Args params { argv + 1, argv + argc };
-        if (!parser.populateArgs(params, arguments)) {
+        if (!parser.populateArgs(params)) {
             helpAndExit(1);
         }
 
-        const double underlying = std::stod(arguments[Flag::Underlying]);
-        const double strike = std::stod(arguments[Flag::Strike]);
-        const uint32_t expiry = static_cast<uint32_t>(std::stoi(arguments[Flag::Expiry]));
-        const double interest = std::stod(arguments[Flag::Interest]);
-        const double volatility = std::stod(arguments[Flag::Volatility]);
+        auto optionValues = parser.getOptionValues();
 
-        OptionValues<double> v { underlying, strike, expiry, interest, volatility };
-        if (arguments[Flag::OptionType] == "call") {
-            Option<CallExecutor> call(std::move(v));
+        if (parser.getOptionType() == OptionType::Call) {
+            Option<CallExecutor> call(std::move(optionValues));
             auto value = call();
             fmt::print("Call Option Value: {}\n", value);
         }
         else {
-            Option<PutExecutor> put(std::move(v));
+            Option<PutExecutor> put(std::move(optionValues));
             auto value = put();
             fmt::print("Put Option Value: {}\n", value);
         }

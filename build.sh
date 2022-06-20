@@ -75,7 +75,7 @@ function build() {
 
 function unit_test() {
   if [[ ${UNITTEST} == true ]]; then
-    ${BUILD_DIR}/bin/bsc_tests
+    ${BUILD_DIR}/bin/bsm_tests
   fi
 }
 
