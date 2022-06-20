@@ -8,48 +8,51 @@
 namespace bsm
 {
 
+template<typename value_type>
+struct OptionValues;
+
 template<typename value_type = double>
 class BlackScholes
 {
 public:
     BlackScholes() = default;
 
-    value_type callOptionValue(value_type underlying, value_type strike, value_type interest, value_type volatility, uint32_t expiry) {
-        auto dOne = d1(underlying, strike, interest, volatility, expiry);
-        auto returnProb = returnsProbability(underlying, dOne);
-        auto costProb = costProbability(strike, interest, expiry, d2(dOne, volatility, expiry));
+    auto callOptionValue(const OptionValues<value_type> &values) {
+        auto dOne = d1(values);
+        auto returnProb = returnsProbability(values.underlyingPrice_, dOne);
+        auto costProb = costProbability(values, d2(dOne, values));
         return returnProb - costProb;
     }
 
-    value_type putOptionValue(value_type underlying, value_type strike, value_type interest, value_type volatility, uint32_t expiry) {
-        auto dOne = d1(underlying, strike, interest, volatility, expiry);
-        auto costProb = costProbability(strike, interest, expiry, -d2(dOne, volatility, expiry));
-        auto returnProb = returnsProbability(underlying, -dOne);
+    auto putOptionValue(const OptionValues<value_type> &values) {
+        auto dOne = d1(values);
+        auto costProb = costProbability(values, -d2(dOne, values));
+        auto returnProb = returnsProbability(values.underlyingPrice_, -dOne);
         return costProb - returnProb;
     }
 
 private:
-    value_type cumulNormalDist(value_type coefficient) {
+    auto cumulNormalDist(value_type coefficient) {
         return static_cast<value_type>(0.5) * std::erfc(-coefficient * (1 / std::sqrt(2)));
     }
 
-    value_type returnsProbability(value_type underlying, value_type ratio) {
+    auto returnsProbability(value_type underlying, value_type ratio) {
         return underlying * cumulNormalDist(ratio);
     }
 
-    value_type costProbability(value_type strike, value_type interest, uint32_t expiry, value_type ratio) {
-        return strike * std::exp(-interest * expiry) * cumulNormalDist(ratio);
+    auto costProbability(const OptionValues<value_type> &values, value_type ratio) {
+        return values.strikePrice_ * std::exp(-values.riskFreeInterest_ * values.timeToExpiry_) * cumulNormalDist(ratio);
     }
 
-    value_type d1(value_type underlying, value_type strike, value_type interest, value_type volatility, uint32_t expiry) {
-        auto ratio = std::log(underlying / strike);
-        auto riskFreeTime = interest + ((std::pow(volatility, 2) / 2) * expiry);
-        auto time = volatility * (std::sqrt(expiry));
+    auto d1(const OptionValues<value_type> &values) {
+        auto ratio = std::log(values.underlyingPrice_ / values.strikePrice_);
+        auto riskFreeTime = values.riskFreeInterest_ + ((std::pow(values.volatility_, 2) / 2) * values.timeToExpiry_);
+        auto time = values.volatility_ * (std::sqrt(values.timeToExpiry_));
         return (ratio + riskFreeTime) / time;
     }
 
-    value_type d2(value_type d1, value_type volatility, uint32_t expiry) {
-        auto time = volatility * (std::sqrt(expiry));
+    auto d2(value_type d1, const OptionValues<value_type> &values) {
+        auto time = values.volatility_ * (std::sqrt(values.timeToExpiry_));
         return d1 - time;
     }
 };

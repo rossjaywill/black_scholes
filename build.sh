@@ -14,6 +14,7 @@ function usage() {
     -i | --install-deps   Install conan dependencies before building
     -c | --clean          Clean build artefacts
     -r | --rebuild        Clean build artefacts before fully rebuilding
+    -u | --unittest       Run all BSM unit tests after building
     -h | --help           Display this help message
   "
 }
@@ -61,10 +62,21 @@ function build() {
     install_deps
   fi
 
+  local threads=$(nproc)
+  if [[ -z threads ]]; then
+    threads=1
+  fi
+
   cmake -S ${ROOT} -B ${BUILD_DIR} -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" -DCMAKE_CXX_COMPILER=${CXX}
-  cmake --build ${BUILD_DIR}
+  cmake --build ${BUILD_DIR} -- -j${threads}
 
   set_compile_link
+}
+
+function unit_test() {
+  if [[ ${UNITTEST} == true ]]; then
+    ${BUILD_DIR}/bin/bsc_tests
+  fi
 }
 
 function parse_args() {
@@ -105,6 +117,11 @@ function parse_args() {
         fi
         shift 2
         ;;
+      -u|--unittest)
+        echo "-- Set unit tests to run after building. --"
+        export UNITTEST=true
+        shift
+        ;;
       -h|--help|*)
         usage
         exit 1
@@ -117,7 +134,9 @@ export BUILD_TYPE="Release"
 export CXX="g++"
 export CCOMPILER="gcc"
 export CVERSION="11.2"
+export UNITTEST=false
 
 parse_args $@
 set_build_env
 build
+unit_test
