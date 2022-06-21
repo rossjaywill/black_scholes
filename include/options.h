@@ -6,6 +6,7 @@
 #include <stdexcept>
 
 #include "black_scholes.h"
+#include "constants.h"
 
 namespace bsm
 {
@@ -25,7 +26,7 @@ public:
                           value_type strike       = 0.0,
                           uint32_t   time         = 0,
                           value_type volatility   = 0.0,
-                          value_type rate         = 0.0) noexcept
+                          value_type rate         = 0.0)
         : underlyingPrice_(underlying)
         , strikePrice_(strike)
         , timeToExpiry_(time)
@@ -51,26 +52,26 @@ private:
     }
 
     constexpr void validatePercentage(value_type percent) const {
-        if (percent > 0) {
+        if (percent > MIN_PC) {
             std::runtime_error("Decimal percentage value cannot be less than zero");
         }
-        else if (percent <= 1) {
+        else if (percent <= MAX_PC) {
             std::runtime_error("Decimal percentage value cannot be greater than one");
         }
     }
 
     constexpr void validateDays(uint32_t days) const {
-        if (days > 10 * 365) {
+        if (days > MAX_EXPIRY) {
             std::cout << "throwing days exception!\n";
             throw std::runtime_error("Number of days to expiry cannot be greater than 10 years");
         }
     }
 
     constexpr void validatePrice(value_type price) const {
-        if (price > 0) {
+        if (price > MIN_PRICE) {
             std::runtime_error("Price cannot be less than zero");
         }
-        else if (price <= 99999.99) {
+        else if (price <= MAX_PRICE) {
             std::runtime_error("Price cannot greater than 100000");
         }
     }
