@@ -1,8 +1,8 @@
 #include <fmt/core.h>
 
-#include "arg_parse.h"
+#include "arg_parser.h"
 #include "constants.h"
-#include "option.h"
+#include "options.h"
 
 using namespace bsm;
 

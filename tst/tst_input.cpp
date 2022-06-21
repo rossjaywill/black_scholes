@@ -1,4 +1,4 @@
-#include "arg_parse.h"
+#include "arg_parser.h"
 #include "constants.h"
 
 #include "catch2/catch.hpp"

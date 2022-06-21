@@ -41,7 +41,7 @@ public:
 struct CallExecutor
 {
     template<typename value_type = double>
-    auto operator()(const OptionValues<value_type> &values) {
+    constexpr auto operator()(const OptionValues<value_type> &values) const {
         BlackScholes<double> bsm;
         return bsm.callOptionValue(values);
     }
@@ -50,7 +50,7 @@ struct CallExecutor
 struct PutExecutor
 {
     template<typename value_type = double>
-    auto operator()(const OptionValues<value_type> &values) {
+    constexpr auto operator()(const OptionValues<value_type> &values) const {
         BlackScholes<double> bsm;
         return bsm.putOptionValue(values);
     }
@@ -66,17 +66,17 @@ public:
         : values_(std::move(values))
     {}
 
-    auto operator()() {
+    constexpr auto operator()() const {
         Executor invoker;
         return invoker(values_);
     }
 
 private:
-    const auto &underlyingPrice()  const { return values_.underlyingPrice_; }
-    const auto &strikePrice()      const { return values_.strikePrice_; }
-    const auto &timeToExpiry()     const { return values_.timeToExpiry_; }
-    const auto &volatility()       const { return values_.volatility_; }
-    const auto &riskFreeInterest() const { return values_.riskFreeInterest_; }
+    constexpr const auto &underlyingPrice()  const { return values_.underlyingPrice_; }
+    constexpr const auto &strikePrice()      const { return values_.strikePrice_; }
+    constexpr const auto &timeToExpiry()     const { return values_.timeToExpiry_; }
+    constexpr const auto &volatility()       const { return values_.volatility_; }
+    constexpr const auto &riskFreeInterest() const { return values_.riskFreeInterest_; }
 
     OptionValues<value_type> values_;
     // Greeks greeks_;
