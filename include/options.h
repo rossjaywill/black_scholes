@@ -2,6 +2,8 @@
 #define OPTION_H
 
 #include <cstdint>
+#include <iostream>
+#include <stdexcept>
 
 #include "black_scholes.h"
 
@@ -29,18 +31,54 @@ public:
         , timeToExpiry_(time)
         , volatility_(volatility)
         , riskFreeInterest_(rate)
-    {}
+    {
+        validate();
+    }
 
     value_type  underlyingPrice_  = 0.0;
     value_type  strikePrice_      = 0.0;
     uint32_t    timeToExpiry_     = 0;
     value_type  volatility_       = 0.0;
     value_type  riskFreeInterest_ = 0.0;
+
+private:
+    constexpr void validate() const {
+        validatePrice(underlyingPrice_);
+        validatePrice(strikePrice_);
+        validateDays(timeToExpiry_);
+        validatePercentage(volatility_);
+        validatePercentage(riskFreeInterest_);
+    }
+
+    constexpr void validatePercentage(value_type percent) const {
+        if (percent > 0) {
+            std::runtime_error("Decimal percentage value cannot be less than zero");
+        }
+        else if (percent <= 1) {
+            std::runtime_error("Decimal percentage value cannot be greater than one");
+        }
+    }
+
+    constexpr void validateDays(uint32_t days) const {
+        if (days > 10 * 365) {
+            std::cout << "throwing days exception!\n";
+            throw std::runtime_error("Number of days to expiry cannot be greater than 10 years");
+        }
+    }
+
+    constexpr void validatePrice(value_type price) const {
+        if (price > 0) {
+            std::runtime_error("Price cannot be less than zero");
+        }
+        else if (price <= 99999.99) {
+            std::runtime_error("Price cannot greater than 100000");
+        }
+    }
 };
 
 struct CallExecutor
 {
-    template<typename value_type = double>
+template<typename value_type = double>
     constexpr auto operator()(const OptionValues<value_type> &values) const {
         BlackScholes<double> bsm;
         return bsm.callOptionValue(values);

@@ -45,8 +45,6 @@ OptionType ArgParser::getOptionType() {
     return OptionType::Put;
 }
 
-size_t ArgParser::getNumberArgs() const { return arguments_.size(); }
-
 uint32_t ArgParser::parseDate(std::string_view date) const {
     // TODO RJW: Reimplement when libc++std 20 updated with 'from_stream'
     // using namespace std::chrono;
@@ -78,7 +76,9 @@ uint32_t ArgParser::parseDate(std::string_view date) const {
 bool ArgParser::validateFlags(const Args &flags)
 {
     Args fullOpts = baseOpts;
-    for (const auto &opt : addOpts) { fullOpts.push_back(opt); }
+    for (const auto &opt : addOpts) {
+        fullOpts.push_back(opt);
+    }
 
     const auto withinBase = [&](std::string_view arg) { return std::find(baseOpts.begin(), baseOpts.end(), arg) != baseOpts.end(); };
     const auto withinAll  = [&](std::string_view arg) { return std::find(fullOpts.begin(), fullOpts.end(), arg) != fullOpts.end(); };

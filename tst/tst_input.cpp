@@ -14,7 +14,7 @@ TEST_CASE("Input interface to bsm binary", "[input]")
 
     SECTION("Verify all values correct with date")
     {
-        const Args in { "-o", "call", "-u", "95", "-s", "100", "-t", "2222-06-16", "-r", "0.02", "-v", "0.15" };
+        const Args in { "-o", "call", "-u", "95", "-s", "100", "-t", "2032-06-16", "-r", "0.02", "-v", "0.15" };
         parser.populateArgs(in);
 
         auto values = parser.getOptionValues();
@@ -27,7 +27,7 @@ TEST_CASE("Input interface to bsm binary", "[input]")
 
     SECTION("Verify default interest and volatiliity values with date")
     {
-        const Args in { "-o", "call", "-u", "95", "-s", "100", "-t", "2222-06-16" };
+        const Args in { "-o", "call", "-u", "95", "-s", "100", "-t", "2032-06-16" };
         parser.populateArgs(in);
 
         auto values = parser.getOptionValues();
@@ -43,5 +43,12 @@ TEST_CASE("Input interface to bsm binary", "[input]")
         const Args in { "-o", "call", "-u", "95", "-s", "100", "-t", "2020-06-16" };
         parser.populateArgs(in);
         REQUIRE_THROWS(parser.getOptionValues(), Contains("already expired"));
+    }
+
+    SECTION("Verify days to expiry cannot be greater than 10 years")
+    {
+        const Args in { "-o", "call", "-u", "95", "-s", "100", "-t", "2222-06-16" };
+        parser.populateArgs(in);
+        REQUIRE_THROWS(parser.getOptionValues(), Contains("expiry cannot be greater than" ));
     }
 }

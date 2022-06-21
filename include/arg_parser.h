@@ -66,7 +66,7 @@ public:
     bool populateArgs(const Args &params);
     OptionValues<double> getOptionValues();
     OptionType getOptionType();
-    size_t getNumberArgs() const;
+    size_t getNumberArgs() const { return arguments_.size(); }
 
 private:
     // Parse input dates in format: 'YYYY-mm-dd'

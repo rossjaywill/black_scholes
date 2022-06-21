@@ -50,13 +50,9 @@ function set_build_env() {
     export CXX="clang++"
     export CCOMPILER="clang"
   fi
-
-  echo "exiting set build env with: ${BUILD_TYPE} and ${CCOMPILER}"
 }
 
 function build() {
-  echo "entering build with: ${BUILD_TYPE} and ${CCOMPILER}"
-
   if [[ ! -f ${BUILD_DIR}/conanbuildinfo.txt ]]; then
     echo "-- No conan packages found. Installing now... --"
     install_deps

@@ -11,13 +11,29 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -std=c++20 -Og -ggdb -Wall -Wextra")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -std=c++20 -O3 -Wall -Wextra")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -std=c++20 -Og -ggdb -Wall -Wextra -pedantic -Werror")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -std=c++20 -O3 -Wall -Wextra -pedantic -Werror")
 
 add_subdirectory(tst)
 
-add_executable(bsm bsm/main.cpp)
-target_include_directories(bsm PRIVATE include)
+add_executable(bsm
+    bsm/main.cpp
+    # bsm/arg_parser.cpp
+)
+
+target_sources(bsm
+    PRIVATE
+    "${CMAKE_SOURCE_DIR}/bsm/arg_parser.cpp"
+)
+
+target_include_directories(bsm
+    PRIVATE
+    bsm
+    include
+)
+
 target_link_libraries(bsm ${CONAN_LIBS})
 target_compile_features(bsm PUBLIC cxx_std_20)
 
+add_compile_options(-fsanitize=address)
+add_link_options(-fsanitize=address)
