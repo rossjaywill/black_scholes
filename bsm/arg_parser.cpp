@@ -1,4 +1,9 @@
+#include <chrono>
+#include <iomanip>
+#include <sstream>
+
 #include "arg_parser.h"
+#include "constants.h"
 
 namespace bsm
 {
@@ -28,21 +33,19 @@ bool ArgParser::populateArgs(const Args &params)
     return true;
 }
 
-OptionValues<double> ArgParser::getOptionValues() {
+OptionValues<ArgParser::value_type> ArgParser::getOptionValues() {
     const auto underlying = std::stod(arguments_[Flag::Underlying]);
     const auto strike     = std::stod(arguments_[Flag::Strike]);
     const auto expiry     = parseDate(arguments_[Flag::Expiry]);
     const auto volatility = std::stod(arguments_[Flag::Volatility]);
     const auto interest   = std::stod(arguments_[Flag::Interest]);
 
-    return OptionValues<double> { underlying, strike, expiry, volatility, interest };
+    return OptionValues<value_type> { underlying, strike, expiry, volatility, interest };
 }
 
 OptionType ArgParser::getOptionType() {
-    if (arguments_[Flag::OptionType] == "call") {
-        return OptionType::Call;
-    }
-    return OptionType::Put;
+    return (arguments_[Flag::OptionType] == "call") ?
+        OptionType::Call : OptionType::Put;
 }
 
 uint32_t ArgParser::parseDate(std::string_view date) const {
@@ -51,19 +54,21 @@ uint32_t ArgParser::parseDate(std::string_view date) const {
     // std::chrono::from_stream(std::stringstream(std::string(date)), "%Y-%m-%d", ymd);
 
     constexpr auto setToMidnight = [](std::tm &time) { time.tm_hour = 0; time.tm_min = 0; time.tm_sec = 0; };
-    constexpr auto getDaysDelta  = [](double diff) { return static_cast<uint32_t>((((diff / 60) / 60) / 24)); };
+    constexpr auto getDaysDelta  = [](value_type diff) {
+        return static_cast<uint32_t>((((diff / SEC_TO_MIN) / MIN_TO_HOUR) / HOUR_TO_DAY));
+    };
 
     const std::time_t now = std::time(nullptr);
     std::tm inTime;
-    std::tm* nowLocal = std::localtime(&now);
+    std::tm nowLocal = *std::localtime(&now);
 
     std::stringstream ss(date.data());
-    ss >> std::get_time(&inTime, "%Y-%m-%d");
+    ss >> std::get_time(&inTime, DATE_FMT);
     setToMidnight(inTime);
-    setToMidnight(*nowLocal);
+    setToMidnight(nowLocal);
 
-    const std::time_t expiry = std::mktime(&inTime);
-    const std::time_t current = std::mktime(nowLocal);
+    const std::time_t expiry  = std::mktime(&inTime);
+    const std::time_t current = std::mktime(&nowLocal);
 
     if (current > expiry) {
         throw std::runtime_error("Option has already expired, please enter a valid date");

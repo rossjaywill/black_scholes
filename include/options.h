@@ -43,7 +43,7 @@ public:
     value_type  riskFreeInterest_ = 0.0;
 
 private:
-    constexpr void validate() const {
+    inline constexpr void validate() const {
         validatePrice(underlyingPrice_);
         validatePrice(strikePrice_);
         validateDays(timeToExpiry_);
@@ -51,37 +51,36 @@ private:
         validatePercentage(riskFreeInterest_);
     }
 
-    constexpr void validatePercentage(value_type percent) const {
-        if (percent > MIN_PC) {
-            std::runtime_error("Decimal percentage value cannot be less than zero");
+    inline constexpr void validatePercentage(value_type percent) const {
+        if (percent < MIN_PC) {
+            throw std::runtime_error("Decimal percentage value cannot be less than zero");
         }
-        else if (percent <= MAX_PC) {
-            std::runtime_error("Decimal percentage value cannot be greater than one");
+        else if (percent >= MAX_PC) {
+            throw std::runtime_error("Decimal percentage value cannot be greater than one");
         }
     }
 
-    constexpr void validateDays(uint32_t days) const {
+    inline constexpr void validateDays(uint32_t days) const {
         if (days > MAX_EXPIRY) {
-            std::cout << "throwing days exception!\n";
             throw std::runtime_error("Number of days to expiry cannot be greater than 10 years");
         }
     }
 
-    constexpr void validatePrice(value_type price) const {
-        if (price > MIN_PRICE) {
-            std::runtime_error("Price cannot be less than zero");
+    inline constexpr void validatePrice(value_type price) const {
+        if (price < MIN_PRICE) {
+            throw std::runtime_error("Price cannot be less than zero");
         }
-        else if (price <= MAX_PRICE) {
-            std::runtime_error("Price cannot greater than 100000");
+        else if (price >= MAX_PRICE) {
+            throw std::runtime_error("Price cannot greater than 100000");
         }
     }
 };
 
 struct CallExecutor
 {
-template<typename value_type = double>
-    constexpr auto operator()(const OptionValues<value_type> &values) const {
-        BlackScholes<double> bsm;
+    template<typename value_type = double>
+    inline constexpr auto operator()(const OptionValues<value_type> &values) const {
+        BlackScholes<value_type> bsm;
         return bsm.callOptionValue(values);
     }
 };
@@ -89,7 +88,7 @@ template<typename value_type = double>
 struct PutExecutor
 {
     template<typename value_type = double>
-    constexpr auto operator()(const OptionValues<value_type> &values) const {
+    inline constexpr auto operator()(const OptionValues<value_type> &values) const {
         BlackScholes<double> bsm;
         return bsm.putOptionValue(values);
     }
@@ -105,17 +104,17 @@ public:
         : values_(std::move(values))
     {}
 
-    constexpr auto operator()() const {
+    inline constexpr auto operator()() const {
         Executor invoker;
         return invoker(values_);
     }
 
 private:
-    constexpr const auto &underlyingPrice()  const { return values_.underlyingPrice_; }
-    constexpr const auto &strikePrice()      const { return values_.strikePrice_; }
-    constexpr const auto &timeToExpiry()     const { return values_.timeToExpiry_; }
-    constexpr const auto &volatility()       const { return values_.volatility_; }
-    constexpr const auto &riskFreeInterest() const { return values_.riskFreeInterest_; }
+    inline constexpr const auto &underlyingPrice()  const { return values_.underlyingPrice_; }
+    inline constexpr const auto &strikePrice()      const { return values_.strikePrice_; }
+    inline constexpr const auto &timeToExpiry()     const { return values_.timeToExpiry_; }
+    inline constexpr const auto &volatility()       const { return values_.volatility_; }
+    inline constexpr const auto &riskFreeInterest() const { return values_.riskFreeInterest_; }
 
     OptionValues<value_type> values_;
     // Greeks greeks_;

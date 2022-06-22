@@ -75,6 +75,22 @@ function unit_test() {
   fi
 }
 
+function set_base_env() {
+  export BUILD_TYPE="Release"
+  export CXX="g++"
+  export CCOMPILER="gcc"
+  export CVERSION="11.2"
+  export UNITTEST=false
+}
+
+function clear_env() {
+  unset BUILD_TYPE
+  unset CXX
+  unset CCOMPILER
+  unset CVERSION
+  unset UNITTEST
+}
+
 function parse_args() {
   while test $#  -gt 0; do
   case "$1" in
@@ -126,13 +142,10 @@ function parse_args() {
   done
 }
 
-export BUILD_TYPE="Release"
-export CXX="g++"
-export CCOMPILER="gcc"
-export CVERSION="11.2"
-export UNITTEST=false
 
+set_base_env
 parse_args $@
 set_build_env
 build
 unit_test
+clear_env

@@ -1,10 +1,4 @@
-#include <chrono>
 #include <functional>
-#include <iomanip>
-#include <iostream>
-#include <stdexcept>
-#include <string>
-#include <sstream>
 #include <unordered_map>
 #include <vector>
 
@@ -61,10 +55,11 @@ static const uint32_t NUM_ALL_FLAGS  = NUM_BASE_FLAGS + NUM_ADDL_FLAGS;
 class ArgParser
 {
 public:
+    using value_type = double;
     ArgParser() = default;
 
     bool populateArgs(const Args &params);
-    OptionValues<double> getOptionValues();
+    OptionValues<value_type> getOptionValues();
     OptionType getOptionType();
     size_t getNumberArgs() const { return arguments_.size(); }
 
