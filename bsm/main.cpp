@@ -6,13 +6,12 @@
 
 using namespace bsm;
 
-void displayHelp()
-{
+void displayHelp() {
     fmt::print("Direct run of BSM command requires at least 4 of the required arguments:\n"
                 "\t-o | --option-type          : Type of option ('call' or 'put') [required]\n"
                 "\t-u | --underling-price      : Price of underlying asset [required]\n"
                 "\t-s | --strike-price         : Strike price of the options contract [required]\n"
-                "\t-t | --time-to-expiry       : Time to next (front) expiry date of the option contract in days [required]\n"
+                "\t-t | --time-to-expiry       : Time to next (front) expiry date of the option contract in YYYY-mm-dd format [required]\n"
                 "\t-v | --volatility           : Implied volatility of underlying asset [optional]\n"
                 "\t-r | --rate-of-interest     : Risk Free interest rate [optional]\n\n"
                 "\t(-h | --help                : Display this help/usage message)\n"
@@ -20,14 +19,12 @@ void displayHelp()
                 "default assumptions for these values.\n");
 }
 
-[[noreturn]] void helpAndExit(int code)
-{
+[[noreturn]] void helpAndExit(int code) {
     displayHelp();
     exit(code);
 }
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
     ArgParser parser;
     try {
         fmt::print("Running black scholes merton\n");

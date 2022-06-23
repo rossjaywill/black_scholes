@@ -24,7 +24,7 @@ public:
     OptionValues() = default;
     explicit OptionValues(value_type underlying   = 0.0,
                           value_type strike       = 0.0,
-                          uint32_t   time         = 0,
+                          value_type   time         = 0,
                           value_type volatility   = 0.0,
                           value_type rate         = 0.0)
         : underlyingPrice_(underlying)
@@ -38,7 +38,7 @@ public:
 
     value_type  underlyingPrice_  = 0.0;
     value_type  strikePrice_      = 0.0;
-    uint32_t    timeToExpiry_     = 0;
+    value_type  timeToExpiry_     = 0;
     value_type  volatility_       = 0.0;
     value_type  riskFreeInterest_ = 0.0;
 
@@ -46,7 +46,7 @@ private:
     inline constexpr void validate() const {
         validatePrice(underlyingPrice_);
         validatePrice(strikePrice_);
-        validateDays(timeToExpiry_);
+        validateExpiryTime(timeToExpiry_);
         validatePercentage(volatility_);
         validatePercentage(riskFreeInterest_);
     }
@@ -60,9 +60,9 @@ private:
         }
     }
 
-    inline constexpr void validateDays(uint32_t days) const {
-        if (days > MAX_EXPIRY) {
-            throw std::runtime_error("Number of days to expiry cannot be greater than 10 years");
+    inline constexpr void validateExpiryTime(value_type time) const {
+        if (time * DAY_TO_YEAR > MAX_EXPIRY) {
+            throw std::runtime_error("Time to expiry cannot be greater than 10 years");
         }
     }
 

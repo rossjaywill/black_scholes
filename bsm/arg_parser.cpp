@@ -8,8 +8,7 @@
 namespace bsm
 {
 
-bool ArgParser::populateArgs(const Args &params)
-{
+bool ArgParser::populateArgs(const Args &params) {
     Args flags;
     for (const auto &param : params) {
         if (param.find_first_of("-") == 0) {
@@ -40,6 +39,7 @@ OptionValues<ArgParser::value_type> ArgParser::getOptionValues() {
     const auto volatility = std::stod(arguments_[Flag::Volatility]);
     const auto interest   = std::stod(arguments_[Flag::Interest]);
 
+    std::cout << "parsed date with expiry val: " << expiry << "\n";
     return OptionValues<value_type> { underlying, strike, expiry, volatility, interest };
 }
 
@@ -48,14 +48,13 @@ OptionType ArgParser::getOptionType() {
         OptionType::Call : OptionType::Put;
 }
 
-uint32_t ArgParser::parseDate(std::string_view date) const {
+ArgParser::value_type ArgParser::parseDate(std::string_view date) const {
     // TODO RJW: Reimplement when libc++std 20 updated with 'from_stream'
-    // using namespace std::chrono;
     // std::chrono::from_stream(std::stringstream(std::string(date)), "%Y-%m-%d", ymd);
 
     constexpr auto setToMidnight = [](std::tm &time) { time.tm_hour = 0; time.tm_min = 0; time.tm_sec = 0; };
     constexpr auto getDaysDelta  = [](value_type diff) {
-        return static_cast<uint32_t>((((diff / SEC_TO_MIN) / MIN_TO_HOUR) / HOUR_TO_DAY));
+        return static_cast<value_type>((((diff / SEC_TO_MIN) / MIN_TO_HOUR) / HOUR_TO_DAY));
     };
 
     const std::time_t now = std::time(nullptr);
@@ -75,11 +74,10 @@ uint32_t ArgParser::parseDate(std::string_view date) const {
     }
 
     auto diff = std::difftime(expiry, current);
-    return getDaysDelta(diff);
+    return getDaysDelta(diff) / DAY_TO_YEAR;
 }
 
-bool ArgParser::validateFlags(const Args &flags)
-{
+bool ArgParser::validateFlags(const Args &flags) {
     Args fullOpts = baseOpts;
     for (const auto &opt : addOpts) {
         fullOpts.push_back(opt);

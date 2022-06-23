@@ -64,8 +64,8 @@ public:
     size_t getNumberArgs() const { return arguments_.size(); }
 
 private:
-    // Parse input dates in format: 'YYYY-mm-dd'
-    uint32_t parseDate(std::string_view date) const;
+    // Parse input dates in format: 'YYYY-mm-dd' as time to expiry in years
+    value_type parseDate(std::string_view date) const;
     bool validateFlags(const Args &flags);
     OptionMap arguments_;
 };
