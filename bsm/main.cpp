@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <fmt/core.h>
 
 #include "arg_parser.h"
@@ -31,7 +32,7 @@ int main(int argc, char **argv) {
 
         const Args params { argv + 1, argv + argc };
         if (!parser.populateArgs(params)) {
-            helpAndExit(1);
+            helpAndExit(EXIT_FAILURE);
         }
 
         auto optionValues = parser.getOptionValues();
@@ -49,7 +50,8 @@ int main(int argc, char **argv) {
     }
     catch (const std::exception &e) {
         fmt::print("Exeception caught during bsm run:\n{}", e.what());
-        helpAndExit(1);
+        helpAndExit(EXIT_FAILURE);
     }
-    return 0;
+    return EXIT_SUCCESS;
 }
+

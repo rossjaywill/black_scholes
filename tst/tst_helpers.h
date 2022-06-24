@@ -9,26 +9,20 @@
 namespace bsm
 {
 using value_type = double;
-static constexpr const auto EPILSON  = std::numeric_limits<value_type>::epsilon();
 
+// Verify floating point values are equal to 3 decimal places.
 static bool valueEquals(value_type lhs, value_type rhs) {
-    std::cout << "lhs: " << lhs << " rhs: " << rhs << "\n";
-    std::cout << "abs: " << std::fabs(lhs - rhs) << "\n";
-    std::cout << "epsilon: " << EPILSON << "\n";
-    std::cout << "epsilon * max: " << EPILSON * std::max(lhs, rhs) << "\n";
-
-    // if (std::fabs(lhs - rhs) == 0) {
-    //     return true;
-    // }
-    return (std::fabs(lhs - rhs) <= EPILSON * std::max({ 1.0, lhs, rhs }));
+    return (std::fabs(lhs - rhs) <= DP3);
 }
 
+// Parse time struct to YYYY-mm-dd format
 inline std::string dateToString(std::tm &time) {
     std::ostringstream oss;
     oss << std::put_time(&time, DATE_FMT);
     return oss.str();
 }
 
+// Get current date as YYYY-mm-dd format
 inline std::string getCurrentDate() {
     auto current = std::time(nullptr);
     auto local   = *std::localtime(&current);
@@ -36,6 +30,7 @@ inline std::string getCurrentDate() {
     return dateToString(local);
 }
 
+// Get date as offset in days from current date
 inline std::string getDateOffset(value_type days) {
     auto current = std::time(nullptr);
     auto local   = *std::localtime(&current);

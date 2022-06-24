@@ -39,7 +39,6 @@ OptionValues<ArgParser::value_type> ArgParser::getOptionValues() {
     const auto volatility = std::stod(arguments_[Flag::Volatility]);
     const auto interest   = std::stod(arguments_[Flag::Interest]);
 
-    std::cout << "parsed date with expiry val: " << expiry << "\n";
     return OptionValues<value_type> { underlying, strike, expiry, volatility, interest };
 }
 

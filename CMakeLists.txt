@@ -16,17 +16,19 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -std=c++20 -O3 -Wall -We
 
 add_subdirectory(tst)
 
-add_executable(bsm
+add_executable(
+    bsm
     bsm/main.cpp
-    # bsm/arg_parser.cpp
 )
 
-target_sources(bsm
+target_sources(
+    bsm
     PRIVATE
     "${CMAKE_SOURCE_DIR}/bsm/arg_parser.cpp"
 )
 
-target_include_directories(bsm
+target_include_directories(
+    bsm
     PRIVATE
     bsm
     include

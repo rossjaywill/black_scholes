@@ -21,6 +21,8 @@ static constexpr const auto MIN_PRICE  = 0.00;
 static constexpr const auto MAX_PRICE  = 99999.99;
 
 static constexpr const auto DATE_FMT   = "%Y-%m-%d";
+// static constexpr const auto EPILSON  = std::numeric_limits<value_type>::epsilon();
+static constexpr const auto DP3        = 1E-3;
 
 } // bsm
 

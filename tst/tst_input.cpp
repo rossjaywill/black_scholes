@@ -15,16 +15,16 @@ TEST_CASE("Input interface to bsm binary", "[input]")
 
     SECTION("Verify all values correct with date")
     {
-        const value_type daysOffset = 8;
+        const value_type daysOffset = 30;
         const Args in { "-o", "call", "-u", "95", "-s", "100", "-t", getDateOffset(daysOffset), "-r", "0.02", "-v", "0.15" };
         parser.populateArgs(in);
 
         auto values = parser.getOptionValues();
         REQUIRE(values.underlyingPrice_  == 95.0);
         REQUIRE(values.strikePrice_      == 100.0);
-        REQUIRE(values.timeToExpiry_     == daysOffset / DAY_TO_YEAR);
-        REQUIRE(values.riskFreeInterest_ == 0.02);
-        REQUIRE(values.volatility_       == 0.15);
+        REQUIRE(valueEquals(values.timeToExpiry_, daysOffset / DAY_TO_YEAR));
+        REQUIRE(valueEquals(values.riskFreeInterest_, 0.02));
+        REQUIRE(valueEquals(values.volatility_, 0.15));
     }
 
     SECTION("Verify default interest and volatiliity values with date")
@@ -39,9 +39,6 @@ TEST_CASE("Input interface to bsm binary", "[input]")
         REQUIRE(valueEquals(values.timeToExpiry_, daysOffset / DAY_TO_YEAR));
         REQUIRE(valueEquals(values.riskFreeInterest_, INTEREST));
         REQUIRE(valueEquals(values.volatility_, IMPIED_VOL));
-        // REQUIRE(values.timeToExpiry_     == daysOffset / DAY_TO_YEAR);
-        // REQUIRE(values.riskFreeInterest_ == INTEREST);
-        // REQUIRE(values.volatility_       == IMPIED_VOL);
     }
 
     SECTION("Ensure already expired options are not handled")
@@ -56,7 +53,6 @@ TEST_CASE("Input interface to bsm binary", "[input]")
     {
         const value_type daysOffset = 11 * DAY_TO_YEAR;
         const Args in { "-o", "call", "-u", "95", "-s", "100", "-t", getDateOffset(daysOffset)};
-        std::cout << "testing 10 year offset with: " << getDateOffset(daysOffset);
         parser.populateArgs(in);
         REQUIRE_THROWS(parser.getOptionValues(), Contains("Time to expiry cannot be greater than"));
     }

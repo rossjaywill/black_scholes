@@ -24,7 +24,7 @@ public:
     OptionValues() = default;
     explicit OptionValues(value_type underlying   = 0.0,
                           value_type strike       = 0.0,
-                          value_type   time         = 0,
+                          value_type time         = 0,
                           value_type volatility   = 0.0,
                           value_type rate         = 0.0)
         : underlyingPrice_(underlying)
