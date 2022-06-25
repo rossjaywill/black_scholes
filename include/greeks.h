@@ -7,8 +7,9 @@ namespace bsm
 class Greeks
 {
 public:
-
-private:
+    // constexpr auto delta() {
+    //     return
+    // }
 
 };
 

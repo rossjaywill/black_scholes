@@ -1,0 +1,18 @@
+parsed date with expiry val: 0.0383562
+lhs: 0.0383562 rhs: 0.0383562
+abs: 0
+epsilon: 2.22045e-16
+epsilon * max: 8.51678e-18
+lhs: 0.02 rhs: 0.02
+abs: 0
+epsilon: 2.22045e-16
+epsilon * max: 4.44089e-18
+lhs: 0.18 rhs: 0.18
+abs: 0
+epsilon: 2.22045e-16
+epsilon * max: 3.9968e-17
+testing 10 year offset with: 2033-06-20parsed date with expiry val: 11
+parsed date with expiry val: 0.030137
+parsed date with expiry val: 0.0821918
+parsed date with expiry val: 0.0821918
+parsed date with expiry val: 0.0821918

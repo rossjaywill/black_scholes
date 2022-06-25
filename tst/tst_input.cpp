@@ -22,9 +22,9 @@ TEST_CASE("Input interface to bsm binary", "[input]")
         auto values = parser.getOptionValues();
         REQUIRE(values.underlyingPrice_  == 95.0);
         REQUIRE(values.strikePrice_      == 100.0);
-        REQUIRE(valueEquals(values.timeToExpiry_, daysOffset / DAY_TO_YEAR));
-        REQUIRE(valueEquals(values.riskFreeInterest_, 0.02));
-        REQUIRE(valueEquals(values.volatility_, 0.15));
+        REQUIRE(compareFloat(values.timeToExpiry_, daysOffset / DAY_TO_YEAR, DP3));
+        REQUIRE(compareFloat(values.riskFreeInterest_, 0.02));
+        REQUIRE(compareFloat(values.volatility_, 0.15));
     }
 
     SECTION("Verify default interest and volatiliity values with date")
@@ -36,9 +36,9 @@ TEST_CASE("Input interface to bsm binary", "[input]")
         auto values = parser.getOptionValues();
         REQUIRE(values.underlyingPrice_  == 95.0);
         REQUIRE(values.strikePrice_      == 100.0);
-        REQUIRE(valueEquals(values.timeToExpiry_, daysOffset / DAY_TO_YEAR));
-        REQUIRE(valueEquals(values.riskFreeInterest_, INTEREST));
-        REQUIRE(valueEquals(values.volatility_, IMPIED_VOL));
+        REQUIRE(compareFloat(values.timeToExpiry_, daysOffset / DAY_TO_YEAR, DP3));
+        REQUIRE(compareFloat(values.riskFreeInterest_, INTEREST));
+        REQUIRE(compareFloat(values.volatility_, IMPIED_VOL));
     }
 
     SECTION("Ensure already expired options are not handled")

@@ -15,69 +15,69 @@ TEST_CASE("In the money calls, out of the money puts", "[itm]")
     SECTION("ITM one year expiry CALL")
     {
         Option<CallExecutor> option(std::move(input));
-        REQUIRE(valueEquals(option(), 12.692));
+        REQUIRE(compareFloat(option(), 12.69));
     }
 
     SECTION("OTM one year expiry PUT")
     {
         Option<PutExecutor> option(std::move(input));
-        REQUIRE(valueEquals(option(), 3.059));
+        REQUIRE(compareFloat(option(), 3.06));
     }
 
     SECTION("ITM half year expiry CALL")
     {
         input.timeToExpiry_ = 0.5;
         Option<CallExecutor> option(std::move(input));
-        REQUIRE(valueEquals(option(), 9.339));
+        REQUIRE(compareFloat(option(), 9.34));
     }
 
     SECTION("OTM half year expiry PUT")
     {
         input.timeToExpiry_ = 0.5;
         Option<PutExecutor> option(std::move(input));
-        REQUIRE(valueEquals(option(), 1.994));
+        REQUIRE(compareFloat(option(), 1.99));
     }
 
     SECTION("ITM quarter year expiry CALL")
     {
         input.timeToExpiry_ = 0.25;
         Option<CallExecutor> option(std::move(input));
-        REQUIRE(valueEquals(option(), 7.221));
+        REQUIRE(compareFloat(option(), 7.22));
     }
 
     SECTION("OTM quarter year expiry PUT")
     {
         input.timeToExpiry_ = 0.25;
         Option<PutExecutor> option(std::move(input));
-        REQUIRE(valueEquals(option(), 1.041));
+        REQUIRE(compareFloat(option(), 1.04));
     }
 
     SECTION("ITM one year expiry high volatility CALL")
     {
         input.volatility_ = 0.6;
         Option<CallExecutor> option(std::move(input));
-        REQUIRE(valueEquals(option(), 27.572));
+        REQUIRE(compareFloat(option(), 27.57));
     }
 
     SECTION("OTM one year expiry high volatility PUT")
     {
         input.volatility_ = 0.6;
         Option<PutExecutor> option(std::move(input));
-        REQUIRE(valueEquals(option(), 17.939));
+        REQUIRE(compareFloat(option(), 17.94));
     }
 
     SECTION("ITM one year expiry low interest CALL")
     {
         input.riskFreeInterest_ = 0.01;
         Option<CallExecutor> option(std::move(input));
-        REQUIRE(valueEquals(option(), 10.329));
+        REQUIRE(compareFloat(option(), 10.33));
     }
 
     SECTION("OTM one year expiry low interest PUT")
     {
         input.riskFreeInterest_ = 0.01;
         Option<PutExecutor> option(std::move(input));
-        REQUIRE(valueEquals(option(), 4.384));
+        REQUIRE(compareFloat(option(), 4.38));
     }
 }
 
@@ -85,71 +85,116 @@ TEST_CASE("Out of the money calls, in the money puts", "[otm]")
 {
     OptionValues<value_type> input { 20.15, 35.20, 1, 0.25, 0.03 };
 
-    SECTION("ITM one year expiry CALL")
+    SECTION("OTM one year expiry CALL")
     {
         Option<CallExecutor> option(std::move(input));
-        REQUIRE(valueEquals(option(), 0.041));
+        REQUIRE(compareFloat(option(), 0.04));
     }
 
-    SECTION("OTM one year expiry PUT")
+    SECTION("ITM one year expiry PUT")
     {
         Option<PutExecutor> option(std::move(input));
-        REQUIRE(valueEquals(option(), 14.051));
+        REQUIRE(compareFloat(option(), 14.05));
     }
 
-    SECTION("ITM half year expiry CALL")
+    SECTION("OTM half year expiry CALL")
     {
         input.timeToExpiry_ = 0.5;
         Option<CallExecutor> option(std::move(input));
-        REQUIRE(valueEquals(option(), 0.001));
+        REQUIRE(compareFloat(option(), 0.00));
     }
 
-    SECTION("OTM half year expiry PUT")
+    SECTION("ITM half year expiry PUT")
     {
         input.timeToExpiry_ = 0.5;
         Option<PutExecutor> option(std::move(input));
-        REQUIRE(valueEquals(option(), 14.527));
+        REQUIRE(compareFloat(option(), 14.53));
     }
 
-    SECTION("ITM quarter year expiry CALL")
+    SECTION("OTM quarter year expiry CALL")
     {
         input.timeToExpiry_ = 0.25;
         Option<CallExecutor> option(std::move(input));
-        REQUIRE(valueEquals(option(), 0));
+        REQUIRE(compareFloat(option(), 0.00));
     }
 
-    SECTION("OTM quarter year expiry PUT")
+    SECTION("ITM quarter year expiry PUT")
     {
         input.timeToExpiry_ = 0.25;
         Option<PutExecutor> option(std::move(input));
-        REQUIRE(valueEquals(option(), 14.787));
+        REQUIRE(compareFloat(option(), 14.79));
     }
 
-    SECTION("ITM one year expiry high volatility CALL")
+    SECTION("OTM one year expiry high volatility CALL")
     {
         input.volatility_ = 0.6;
         Option<CallExecutor> option(std::move(input));
-        REQUIRE(valueEquals(option(), 1.596));
+        REQUIRE(compareFloat(option(), 1.60));
     }
 
-    SECTION("OTM one year expiry high volatility PUT")
+    SECTION("ITM one year expiry high volatility PUT")
     {
         input.volatility_ = 0.6;
         Option<PutExecutor> option(std::move(input));
-        REQUIRE(valueEquals(option(), 15.606));
+        REQUIRE(compareFloat(option(), 15.60));
     }
 
-    SECTION("ITM one year expiry low interest CALL")
+    SECTION("OTM one year expiry low interest CALL")
     {
         input.riskFreeInterest_ = 0.01;
         Option<CallExecutor> option(std::move(input));
-        REQUIRE(valueEquals(option(), 0.033));
+        REQUIRE(compareFloat(option(), 0.03));
     }
 
-    SECTION("OTM one year expiry low interest PUT")
+    SECTION("ITM one year expiry low interest PUT")
     {
         input.riskFreeInterest_ = 0.01;
         Option<PutExecutor> option(std::move(input));
-        REQUIRE(valueEquals(option(), 14.733));
+        REQUIRE(compareFloat(option(), 14.73));
+    }
+}
+
+TEST_CASE("At the money CALL and PUT options", "[atm]")
+{
+    OptionValues<value_type> input { 40.50, 40.50, 1.5, 0.3, 0.01 };
+
+    SECTION("ATM one and a half year expiry CALL")
+    {
+        Option<CallExecutor> option(std::move(input));
+        REQUIRE(compareFloat(option(), 6.17));
+    }
+
+    SECTION("ATM one and a half year expiry PUT")
+    {
+        Option<PutExecutor> option(std::move(input));
+        REQUIRE(compareFloat(option(), 5.56));
+    }
+
+    SECTION("ATM one and a half year expiry high volatility CALL")
+    {
+        Option<CallExecutor> option(std::move(input));
+        input.volatility_ = 0.7;
+        REQUIRE(compareFloat(option(), 6.17));
+    }
+
+    SECTION("ATM one and a half year expiry high volatility PUT")
+    {
+        Option<PutExecutor> option(std::move(input));
+        input.volatility_ = 0.7;
+        REQUIRE(compareFloat(option(), 5.56));
+    }
+
+    SECTION("ATM one and a half year expiry high interest CALL")
+    {
+        Option<CallExecutor> option(std::move(input));
+        input.riskFreeInterest_ = 0.2;
+        REQUIRE(compareFloat(option(), 6.17));
+    }
+
+    SECTION("ATM one and a half year expiry high interest PUT")
+    {
+        Option<PutExecutor> option(std::move(input));
+        input.riskFreeInterest_ = 0.2;
+        REQUIRE(compareFloat(option(), 5.56));
     }
 }

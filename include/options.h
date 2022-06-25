@@ -24,7 +24,7 @@ public:
     OptionValues() = default;
     explicit OptionValues(value_type underlying   = 0.0,
                           value_type strike       = 0.0,
-                          value_type time         = 0,
+                          value_type time         = 0.0,
                           value_type volatility   = 0.0,
                           value_type rate         = 0.0)
         : underlyingPrice_(underlying)
@@ -38,7 +38,7 @@ public:
 
     value_type  underlyingPrice_  = 0.0;
     value_type  strikePrice_      = 0.0;
-    value_type  timeToExpiry_     = 0;
+    value_type  timeToExpiry_     = 0.0;
     value_type  volatility_       = 0.0;
     value_type  riskFreeInterest_ = 0.0;
 
@@ -51,7 +51,7 @@ private:
         validatePercentage(riskFreeInterest_);
     }
 
-    inline constexpr void validatePercentage(value_type percent) const {
+    inline constexpr void validatePercentage(const value_type percent) const {
         if (percent < MIN_PC) {
             throw std::runtime_error("Decimal percentage value cannot be less than zero");
         }
@@ -60,13 +60,13 @@ private:
         }
     }
 
-    inline constexpr void validateExpiryTime(value_type time) const {
+    inline constexpr void validateExpiryTime(const value_type time) const {
         if (time * DAY_TO_YEAR > MAX_EXPIRY) {
             throw std::runtime_error("Time to expiry cannot be greater than 10 years");
         }
     }
 
-    inline constexpr void validatePrice(value_type price) const {
+    inline constexpr void validatePrice(const value_type price) const {
         if (price < MIN_PRICE) {
             throw std::runtime_error("Price cannot be less than zero");
         }
@@ -100,9 +100,15 @@ class Option
 {
 public:
     Option() = delete;
+    Option(const Option &rhs) : values_(rhs.values_) {}
+    Option(Option &&rhs) : values_(std::move(rhs.values_)) {}
     explicit Option(OptionValues<value_type> &&values) noexcept
         : values_(std::move(values))
     {}
+    ~Option() = default;
+
+    void operator=(const Option &rhs) { this->values_ = rhs.values_; }
+    void operator=(Option &&rhs) { this->values_ = std::move(rhs.values_); }
 
     inline constexpr auto operator()() const {
         Executor invoker;
