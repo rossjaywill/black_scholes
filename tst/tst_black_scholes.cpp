@@ -6,7 +6,6 @@
 #include "catch2/catch.hpp"
 
 using namespace bsm;
-using Catch::Matchers::Contains;
 
 TEST_CASE("In the money calls, out of the money puts", "[itm]")
 {

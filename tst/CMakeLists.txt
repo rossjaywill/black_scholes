@@ -5,6 +5,7 @@ add_executable(
     main.cpp
     tst_input.cpp
     tst_black_scholes.cpp
+    tst_greeks.cpp
 )
 
 include_directories("${CMAKE_SOURCE_DIR}/include")
