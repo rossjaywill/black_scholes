@@ -101,20 +101,20 @@ class Option
 {
 public:
     Option() = delete;
+    explicit Option(OptionValues<value_type> &&values) noexcept
+        : values_(std::move(values))
+        , bsm_()
+        , greeks_(values_, bsm_)
+    {}
     Option(const Option &rhs)
         : values_(rhs.values_)
         , bsm_(rhs.bsm_)
         , greeks_(rhs.greeks_)
     {}
-    Option(Option &&rhs)
+    Option(Option &&rhs) noexcept
         : values_(std::move(rhs.values_))
         , bsm_(std::move(rhs.bsm_))
         , greeks_(std::move(rhs.greeks_))
-    {}
-    explicit Option(OptionValues<value_type> &&values) noexcept
-        : values_(std::move(values))
-        , bsm_()
-        , greeks_(values_, bsm_)
     {}
     ~Option() {}
 
