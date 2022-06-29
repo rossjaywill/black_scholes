@@ -14,6 +14,21 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -std=c++20 -Og -ggdb -Wall -Wextra -pedantic -Werror")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -std=c++20 -O3 -Wall -Wextra -pedantic -Werror")
 
+if (CLANG_TIDY)
+    find_program(
+        CLANG_TIDY_EXE
+        NAMES clang-tidy clang-tidy-11 clang-tidy14
+    )
+    if (NOT CLANG_TIDY_EXE)
+        message(STATUS "Clang tidy enabled, but bin not found. Skipping")
+    else()
+        message(STATUS "Clang tidy enabled")
+        set(CMAKE_CXX_CLANG_TIDY clang-tidy)
+    endif()
+else()
+    message(STATUS "Clang tidy not enabled")
+endif()
+
 add_subdirectory(tst)
 
 add_executable(

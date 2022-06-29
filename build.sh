@@ -15,6 +15,7 @@ function usage() {
     -c | --clean          Clean build artefacts
     -r | --rebuild        Clean build artefacts before fully rebuilding
     -u | --unittest       Run all BSM unit tests after building
+    -ct| --clang-tidy     Enable clang-tidy static analysis checks. Will only run if building (i.e. source changed, '-r', or first build)
     -h | --help           Display this help message
   "
 }
@@ -63,7 +64,7 @@ function build() {
     threads=1
   fi
 
-  cmake -S ${ROOT} -B ${BUILD_DIR} -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" -DCMAKE_CXX_COMPILER=${CXX}
+  cmake -S ${ROOT} -B ${BUILD_DIR} -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" -DCMAKE_CXX_COMPILER=${CXX} -DCLANG_TIDY=${CLANG_TIDY}
   cmake --build ${BUILD_DIR} -- -j${threads}
 
   set_compile_link
@@ -81,6 +82,7 @@ function set_base_env() {
   export CCOMPILER="gcc"
   export CVERSION="11.2"
   export UNITTEST=false
+  export CLANG_TIDY=false
 }
 
 function clear_env() {
@@ -89,6 +91,7 @@ function clear_env() {
   unset CCOMPILER
   unset CVERSION
   unset UNITTEST
+  unset CLANG_TIDY
 }
 
 function parse_args() {
@@ -132,6 +135,11 @@ function parse_args() {
       -u|--unittest)
         echo "-- Set unit tests to run after building. --"
         export UNITTEST=true
+        shift
+        ;;
+      -ct|--clang-tidy)
+        echo "-- Enabling clang-tidy static analysis. --"
+        export CLANG_TIDY=true
         shift
         ;;
       -h|--help|*)
