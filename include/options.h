@@ -136,7 +136,9 @@ public:
     // Greeks
     inline constexpr auto delta() -> value_type { return greeks_.template delta<Executor>(); }
     inline constexpr auto gamma() -> value_type { return greeks_.gamma(); }
-    // value_type theta() { return greeks_.template theta<Executor>(); }
+    inline constexpr auto theta() -> value_type { return greeks_.template theta<Executor>(); }
+    inline constexpr auto vega()  -> value_type { /*return greeks_.template theta<Executor>();*/return 0; }
+    inline constexpr auto rho()   -> value_type { /*return greeks_.template theta<Executor>();*/return 0; }
     // value_type vega()  { return greeks_.template vega<Executor>(); }
     // value_type rho()   { return greeks_.template rho<Executor>(); }
 

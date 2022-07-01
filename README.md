@@ -21,12 +21,13 @@ Where:
 
 | Term | Flag | Definition |
 | --- | ---- |  ------------- |
-| C | - | Call Option Price |
-| P | - | Put Option Price |
+| C | - | Call Option Price (Premium) |
+| P | - | Put Option Price (Premium) |
 | S | -u | Underlying Asset |
 | K | -s | Strike |
-| r | -r | Interest Rate (Risk Free) |
 | t | -t | Time to expiry |
-| N | - | Normal Distribution |
-| σ | - | Std. Dv. Log Returns (Implied Volatility) |
+| σ | -v | Std. Dv. Log Returns (Implied Volatility) |
+| r | -r | (Risk Free) Interest Rate |
+| N | - | Cumulative Normal Distribution |
+| n | - | Standard Normal Density |
 
