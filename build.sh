@@ -25,9 +25,7 @@ function clean() {
 }
 
 function install_deps() {
-  if [[ ! -d ${BUILD_DIR} ]]; then
-    mkdir -p ${BUILD_DIR}
-  fi
+  [[ ! -d ${BUILD_DIR} ]] && mkdir -p ${BUILD_DIR}
 
   pushd ${BUILD_DIR} > /dev/null
   conan install ${ROOT}/conanfile.txt --build -s compiler=${CCOMPILER} -s compiler.version=${CVERSION}
@@ -43,9 +41,7 @@ function set_compile_link() {
 }
 
 function set_build_env() {
-  if [[ "${BUILD_TYPE,,}" == "debug" ]]; then
-    export BUILD_TYPE="Debug"
-  fi
+  [[ "${BUILD_TYPE,,}" == "debug" ]] && export BUILD_TYPE="Debug"
 
   if [[ "${CXX,,}" == "clang" ]]; then
     export CXX="clang++"
@@ -60,20 +56,19 @@ function build() {
   fi
 
   local threads=$(nproc)
-  if [[ -z threads ]]; then
-    threads=1
-  fi
+  [[ -z threads ]] && threads=1
 
-  cmake -S ${ROOT} -B ${BUILD_DIR} -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" -DCMAKE_CXX_COMPILER=${CXX} -DCLANG_TIDY=${CLANG_TIDY}
+  cmake -S ${ROOT} -B ${BUILD_DIR} -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" \
+      -DCMAKE_CXX_COMPILER=${CXX} \
+      -DCLANG_TIDY=${CLANG_TIDY}
+
   cmake --build ${BUILD_DIR} -- -j${threads}
 
   set_compile_link
 }
 
 function unit_test() {
-  if [[ ${UNITTEST} == true ]]; then
-    ${BUILD_DIR}/bin/bsm_tests
-  fi
+  [[ ${UNITTEST} == true ]] && ${BUILD_DIR}/bin/bsm_tests
 }
 
 function set_base_env() {

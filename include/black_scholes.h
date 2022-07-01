@@ -36,7 +36,8 @@ public:
 
     inline constexpr auto d1(const OptionValues<value_type> &values) const {
         const auto ratio = std::log(values.underlyingPrice_ / values.strikePrice_);
-        const auto riskFreeTime = values.riskFreeInterest_ + ((std::pow(values.volatility_, 2) / 2) * values.timeToExpiry_);
+        const auto volTime = ((std::pow(values.volatility_, 2) / 2) * values.timeToExpiry_);
+        const auto riskFreeTime = values.riskFreeInterest_ + volTime;
         const auto time = values.volatility_ * (std::sqrt(values.timeToExpiry_));
         return (ratio + riskFreeTime) / time;
     }
@@ -52,7 +53,8 @@ private:
     }
 
     inline constexpr auto costProbability(const OptionValues<value_type> &values, const value_type ratio) const {
-        return values.strikePrice_ * std::exp(-values.riskFreeInterest_ * values.timeToExpiry_) * cumulNormalDist(ratio);
+        const auto riskFreeReturns = std::exp(-values.riskFreeInterest_ * values.timeToExpiry_);
+        return values.strikePrice_ * riskFreeReturns * cumulNormalDist(ratio);
     }
 };
 

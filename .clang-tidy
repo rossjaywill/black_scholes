@@ -2,6 +2,7 @@ Checks: >-
   -*,
   bugprone-*,
   -bugprone-suspicious-include,
+  -bugprone-use-after-move,
   cppcoreguidelines-*,
   -cppcoreguidelines-avoid-magic-numbers,
   -cppcoreguidelines-no-malloc,

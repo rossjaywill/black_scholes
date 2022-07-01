@@ -12,7 +12,8 @@ void displayHelp() {
                 "\t-o | --option-type          : Type of option ('call' or 'put') [required]\n"
                 "\t-u | --underling-price      : Price of underlying asset [required]\n"
                 "\t-s | --strike-price         : Strike price of the options contract [required]\n"
-                "\t-t | --time-to-expiry       : Time to next (front) expiry date of the option contract in YYYY-mm-dd format [required]\n"
+                "\t-t | --time-to-expiry       : Time to next (front) expiry date of the option contract "
+                "in YYYY-mm-dd format [required]\n"
                 "\t-v | --volatility           : Implied volatility of underlying asset [optional]\n"
                 "\t-r | --rate-of-interest     : Risk Free interest rate [optional]\n\n"
                 "\t(-h | --help                : Display this help/usage message)\n"
@@ -25,7 +26,7 @@ void displayHelp() {
     exit(code);
 }
 
-int main(int argc, char **argv) {
+auto main(int argc, char **argv) -> int {
     ArgParser parser;
     try {
         fmt::print("Running black scholes merton\n");
@@ -39,13 +40,11 @@ int main(int argc, char **argv) {
 
         if (parser.getOptionType() == OptionType::Call) {
             Option<CallExecutor> call(std::move(optionValues));
-            auto value = call();
-            fmt::print("Call Option Value: {}\n", value);
+            fmt::print("Call Option Value: {}\n", call());
         }
         else {
             Option<PutExecutor> put(std::move(optionValues));
-            auto value = put();
-            fmt::print("Put Option Value: {}\n", value);
+            fmt::print("Put Option Value: {}\n", put());
         }
     }
     catch (const std::exception &e) {
@@ -54,4 +53,3 @@ int main(int argc, char **argv) {
     }
     return EXIT_SUCCESS;
 }
-

@@ -11,19 +11,19 @@ namespace bsm
 using value_type = double;
 
 // Verify floating point values are equal to [precision] decimal places.
-static constexpr inline bool compareFloat(value_type lhs, value_type rhs, value_type precision = DP2) {
+static constexpr inline auto compareFloat(value_type lhs, value_type rhs, value_type precision = DP2) -> bool {
     return (std::fabs(lhs - rhs) <= precision);
 }
 
 // Parse time struct to YYYY-mm-dd format
-static inline std::string dateToString(std::tm &time) {
+static inline auto dateToString(std::tm &time) -> std::string {
     std::ostringstream oss;
     oss << std::put_time(&time, DATE_FMT);
     return oss.str();
 }
 
 // Get current date as YYYY-mm-dd format
-static inline std::string getCurrentDate() {
+static inline auto getCurrentDate() -> std::string {
     auto current = std::time(nullptr);
     auto local   = *std::localtime(&current);
 
@@ -31,7 +31,7 @@ static inline std::string getCurrentDate() {
 }
 
 // Get date as offset in days from current date
-static inline std::string getDateOffset(value_type days) {
+static inline auto getDateOffset(value_type days) -> std::string {
     auto current = std::time(nullptr);
     auto local   = *std::localtime(&current);
 

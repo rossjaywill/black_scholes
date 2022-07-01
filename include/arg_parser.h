@@ -28,24 +28,19 @@ static const Args baseOpts {
     "-o", "-u", "-s", "-t",
     "--option-type", "--underlying-price", "--strike-price", "--time-to-expiry"
 };
+
 static const Args addOpts {
     "-v", "-r",
     "--volatility", "--rate-of-interest"
 };
 
-static ArgLookup paramLookup {
-    { "-o",                 Flag::OptionType },
-    { "--option-type",      Flag::OptionType },
-    { "-u",                 Flag::Underlying },
-    { "--underlying-price", Flag::Underlying },
-    { "-s",                 Flag::Strike },
-    { "--strike-price",     Flag::Strike },
-    { "-t",                 Flag::Expiry },
-    { "--time-to-expiry",   Flag::Expiry },
-    { "-v",                 Flag::Volatility },
-    { "--volatility",       Flag::Volatility },
-    { "-r",                 Flag::Interest },
-    { "--rate-of-interest", Flag::Interest },
+static ArgLookup paramLookup{
+    {"-o", Flag::OptionType}, {"--option-type",      Flag::OptionType},
+    {"-u", Flag::Underlying}, {"--underlying-price", Flag::Underlying},
+    {"-s", Flag::Strike},     {"--strike-price",     Flag::Strike},
+    {"-t", Flag::Expiry},     {"--time-to-expiry",   Flag::Expiry},
+    {"-v", Flag::Volatility}, {"--volatility",       Flag::Volatility},
+    {"-r", Flag::Interest},   {"--rate-of-interest", Flag::Interest},
 };
 
 static const uint32_t NUM_BASE_FLAGS = baseOpts.size() / 2;
@@ -58,15 +53,15 @@ public:
     using value_type = double;
     ArgParser() = default;
 
-    bool populateArgs(const Args &params);
-    OptionValues<value_type> getOptionValues();
-    OptionType getOptionType();
-    size_t getNumberArgs() const { return arguments_.size(); }
+    auto populateArgs(const Args &params) -> bool;
+    auto getOptionValues() -> OptionValues<value_type>;
+    auto getOptionType() -> OptionType;
+    auto getNumberArgs() const -> size_t { return arguments_.size(); }
 
 private:
     // Parse input dates in format: 'YYYY-mm-dd' as time to expiry in years
-    value_type parseDate(std::string_view date) const;
-    bool validateFlags(const Args &flags);
+    auto parseDate(std::string_view date) const -> value_type;
+    auto validateFlags(const Args &flags) -> bool;
     OptionMap arguments_;
 };
 

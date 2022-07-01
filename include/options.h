@@ -116,10 +116,10 @@ public:
         , bsm_(std::move(rhs.bsm_))
         , greeks_(std::move(rhs.greeks_))
     {}
-    ~Option() {}
+    ~Option() = default;
 
-    void operator=(const Option &rhs) { this->values_ = rhs.values_; }
-    void operator=(Option &&rhs) { this->values_ = std::move(rhs.values_); }
+    auto operator=(const Option &rhs) -> Option& { this->values_ = rhs.values_; return *this; }
+    auto operator=(Option &&rhs) -> Option& { this->values_ = std::move(rhs.values_); return *this; }
 
     inline constexpr auto operator()() const {
         Executor invoker;
@@ -127,15 +127,15 @@ public:
     }
 
     // Base values
-    inline constexpr const auto &underlyingPrice()  const { return values_.underlyingPrice_; }
-    inline constexpr const auto &strikePrice()      const { return values_.strikePrice_; }
-    inline constexpr const auto &timeToExpiry()     const { return values_.timeToExpiry_; }
-    inline constexpr const auto &volatility()       const { return values_.volatility_; }
-    inline constexpr const auto &riskFreeInterest() const { return values_.riskFreeInterest_; }
+    inline constexpr auto underlyingPrice()  const -> value_type { return values_.underlyingPrice_; }
+    inline constexpr auto strikePrice()      const -> value_type { return values_.strikePrice_; }
+    inline constexpr auto timeToExpiry()     const -> value_type { return values_.timeToExpiry_; }
+    inline constexpr auto volatility()       const -> value_type { return values_.volatility_; }
+    inline constexpr auto riskFreeInterest() const -> value_type { return values_.riskFreeInterest_; }
 
     // Greeks
-    inline constexpr auto delta() { return greeks_.template delta<Executor>(); }
-    inline constexpr auto gamma() { return greeks_.gamma(); }
+    inline constexpr auto delta() -> value_type { return greeks_.template delta<Executor>(); }
+    inline constexpr auto gamma() -> value_type { return greeks_.gamma(); }
     // value_type theta() { return greeks_.template theta<Executor>(); }
     // value_type vega()  { return greeks_.template vega<Executor>(); }
     // value_type rho()   { return greeks_.template rho<Executor>(); }
