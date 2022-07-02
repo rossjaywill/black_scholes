@@ -27,12 +27,18 @@ public:
                           value_type strike       = 0.0,
                           value_type time         = 0.0,
                           value_type volatility   = 0.0,
-                          value_type rate         = 0.0)
+                          value_type rate         = 0.0,
+                          value_type yield        = 0.0)
         : underlyingPrice_(underlying)
         , strikePrice_(strike)
         , timeToExpiry_(time)
         , volatility_(volatility)
         , riskFreeInterest_(rate)
+        , dividendYield_(yield)
+        , sqrtime_(std::sqrt(timeToExpiry_))
+        , volatilityPotential_(volatility_ / (2 * sqrtime_))
+        , interestDiscount_(std::exp(-riskFreeInterest_ * timeToExpiry_))
+        , dividendDiscount_(std::exp(-dividendYield_ * timeToExpiry_))
     {
         validate();
     }
@@ -42,6 +48,13 @@ public:
     value_type  timeToExpiry_     = 0.0;
     value_type  volatility_       = 0.0;
     value_type  riskFreeInterest_ = 0.0;
+    value_type  dividendYield_    = 0.0;
+
+    // Memoize common derived terms
+    const value_type sqrtime_;              // square root of time to expiry
+    const value_type volatilityPotential_;  // potential positive impact of implied volatility
+    const value_type interestDiscount_;     // discounting influence of risk free interest rate
+    const value_type dividendDiscount_;     // discounting influence of underlying dividend yield
 
 private:
     inline constexpr void validate() const {
@@ -50,6 +63,7 @@ private:
         validateExpiryTime(timeToExpiry_);
         validatePercentage(volatility_);
         validatePercentage(riskFreeInterest_);
+        validatePercentage(dividendYield_);
     }
 
     inline constexpr void validatePercentage(const value_type percent) const {
@@ -132,15 +146,14 @@ public:
     inline constexpr auto timeToExpiry()     const -> value_type { return values_.timeToExpiry_; }
     inline constexpr auto volatility()       const -> value_type { return values_.volatility_; }
     inline constexpr auto riskFreeInterest() const -> value_type { return values_.riskFreeInterest_; }
+    inline constexpr auto dividendYield()    const -> value_type { return values_.dividendYield_; }
 
     // Greeks
     inline constexpr auto delta() -> value_type { return greeks_.template delta<Executor>(); }
     inline constexpr auto gamma() -> value_type { return greeks_.gamma(); }
     inline constexpr auto theta() -> value_type { return greeks_.template theta<Executor>(); }
-    inline constexpr auto vega()  -> value_type { /*return greeks_.template theta<Executor>();*/return 0; }
-    inline constexpr auto rho()   -> value_type { /*return greeks_.template theta<Executor>();*/return 0; }
-    // value_type vega()  { return greeks_.template vega<Executor>(); }
-    // value_type rho()   { return greeks_.template rho<Executor>(); }
+    inline constexpr auto vega()  -> value_type { return greeks_.vega(); }
+    inline constexpr auto rho()   -> value_type { return greeks_.template rho<Executor>(); }
 
 private:
     OptionValues<value_type> values_;

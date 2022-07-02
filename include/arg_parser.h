@@ -1,3 +1,6 @@
+#ifndef ARG_PARSER_H
+#define ARG_PARSER_H
+
 #include <functional>
 #include <unordered_map>
 #include <vector>
@@ -15,6 +18,7 @@ enum class Flag : char {
     Expiry     = 't',
     Volatility = 'v',
     Interest   = 'r',
+    Dividend   = 'd',
 };
 
 using Args         = std::vector<std::string>;
@@ -30,8 +34,8 @@ static const Args baseOpts {
 };
 
 static const Args addOpts {
-    "-v", "-r",
-    "--volatility", "--rate-of-interest"
+    "-v", "-r", "-d",
+    "--volatility", "--rate-of-interest", "--dividend"
 };
 
 static ArgLookup paramLookup{
@@ -41,6 +45,7 @@ static ArgLookup paramLookup{
     {"-t", Flag::Expiry},     {"--time-to-expiry",   Flag::Expiry},
     {"-v", Flag::Volatility}, {"--volatility",       Flag::Volatility},
     {"-r", Flag::Interest},   {"--rate-of-interest", Flag::Interest},
+    {"-d", Flag::Dividend},   {"--dividend",         Flag::Dividend},
 };
 
 static const uint32_t NUM_BASE_FLAGS = baseOpts.size() / 2;
@@ -62,7 +67,10 @@ private:
     // Parse input dates in format: 'YYYY-mm-dd' as time to expiry in years
     auto parseDate(std::string_view date) const -> value_type;
     auto validateFlags(const Args &flags) -> bool;
+
     OptionMap arguments_;
 };
 
 } //bsm
+
+#endif

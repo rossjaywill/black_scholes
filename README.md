@@ -23,11 +23,12 @@ Where:
 | --- | ---- |  ------------- |
 | C | - | Call Option Price (Premium) |
 | P | - | Put Option Price (Premium) |
-| S | -u | Underlying Asset |
-| K | -s | Strike |
+| S | -u | Underlying Asset's Price |
+| K | -s | Strike Price |
 | t | -t | Time to expiry |
 | σ | -v | Std. Dv. Log Returns (Implied Volatility) |
-| r | -r | (Risk Free) Interest Rate |
+| r(d) | -r | (Risk Free) Interest Rate |
+| r(f) | -d | Dividend Yield rate |
 | N | - | Cumulative Normal Distribution |
 | n | - | Standard Normal Density |
 

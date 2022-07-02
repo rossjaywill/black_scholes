@@ -1,3 +1,6 @@
+#ifndef TST_HELPERS_H
+#define TST_HELPERS_H
+
 #include <chrono>
 #include <cmath>
 #include <iomanip>
@@ -43,3 +46,5 @@ static inline auto getDateOffset(value_type days) -> std::string {
 }
 
 } // bsm
+
+#endif

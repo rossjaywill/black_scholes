@@ -3,9 +3,10 @@ project(black_scholes_tests LANGUAGES CXX)
 add_executable(
     bsm_tests
     main.cpp
-    tst_input.cpp
     tst_black_scholes.cpp
     tst_greeks.cpp
+    tst_helpers.h
+    tst_input.cpp
 )
 
 target_include_directories(

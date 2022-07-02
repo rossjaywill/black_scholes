@@ -27,28 +27,28 @@ TEST_CASE("In the money calls, out of the money puts", "[itm]")
     {
         input.timeToExpiry_ = 0.5;
         Option<CallExecutor> option(std::move(input));
-        REQUIRE(compareFloat(option(), 9.34));
+        REQUIRE(compareFloat(option(), 9.32));
     }
 
     SECTION("OTM half year expiry PUT")
     {
         input.timeToExpiry_ = 0.5;
         Option<PutExecutor> option(std::move(input));
-        REQUIRE(compareFloat(option(), 1.99));
+        REQUIRE(compareFloat(option(), 1.98));
     }
 
     SECTION("ITM quarter year expiry CALL")
     {
         input.timeToExpiry_ = 0.25;
         Option<CallExecutor> option(std::move(input));
-        REQUIRE(compareFloat(option(), 7.22));
+        REQUIRE(compareFloat(option(), 7.12));
     }
 
     SECTION("OTM quarter year expiry PUT")
     {
         input.timeToExpiry_ = 0.25;
         Option<PutExecutor> option(std::move(input));
-        REQUIRE(compareFloat(option(), 1.04));
+        REQUIRE(compareFloat(option(), 0.934));
     }
 
     SECTION("ITM one year expiry high volatility CALL")
@@ -107,7 +107,7 @@ TEST_CASE("Out of the money calls, in the money puts", "[otm]")
     {
         input.timeToExpiry_ = 0.5;
         Option<PutExecutor> option(std::move(input));
-        REQUIRE(compareFloat(option(), 14.53));
+        REQUIRE(compareFloat(option(), 14.16));
     }
 
     SECTION("OTM quarter year expiry CALL")
@@ -121,7 +121,7 @@ TEST_CASE("Out of the money calls, in the money puts", "[otm]")
     {
         input.timeToExpiry_ = 0.25;
         Option<PutExecutor> option(std::move(input));
-        REQUIRE(compareFloat(option(), 14.79));
+        REQUIRE(compareFloat(option(), 13.41));
     }
 
     SECTION("OTM one year expiry high volatility CALL")

@@ -16,8 +16,9 @@ void displayHelp() {
                 "in YYYY-mm-dd format [required]\n"
                 "\t-v | --volatility           : Implied volatility of underlying asset [optional]\n"
                 "\t-r | --rate-of-interest     : Risk Free interest rate [optional]\n\n"
+                "\t-d | --dividend-yield       : Dividend yield rate [optional]\n\n"
                 "\t(-h | --help                : Display this help/usage message)\n"
-                "Optionally, if implied-volatility and interest-rate are omitted, the program will use "
+                "Optionally, if volatility, interest-rate, or dividend yield are omitted, the program will use "
                 "default assumptions for these values.\n");
 }
 
@@ -48,7 +49,7 @@ auto main(int argc, char **argv) -> int {
         }
     }
     catch (const std::exception &e) {
-        fmt::print("Exeception caught during bsm run:\n{}", e.what());
+        fmt::print("Exeception caught during bsm run:\n{}\n", e.what());
         helpAndExit(EXIT_FAILURE);
     }
     return EXIT_SUCCESS;

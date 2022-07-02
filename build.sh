@@ -33,7 +33,7 @@ function install_deps() {
 }
 
 function set_compile_link() {
-  if [[ ! -L ${ROOT}/compile_commands.json ]]; then
+  if [[ ! -e ${ROOT}/compile_commands.json ]]; then
     # Symlink compile_commands.json artefact to project ROOT
     # This sets LSP definitions for clangd.
     ln -s ${BUILD_DIR}/compile_commands.json ${ROOT}

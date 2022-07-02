@@ -38,18 +38,20 @@ auto ArgParser::getOptionValues() -> OptionValues<ArgParser::value_type> {
     const auto expiry     = parseDate(arguments_[Flag::Expiry]);
     const auto volatility = std::stod(arguments_[Flag::Volatility]);
     const auto interest   = std::stod(arguments_[Flag::Interest]);
+    const auto yield      = std::stod(arguments_[Flag::Dividend]);
 
-    return OptionValues<value_type> { underlying, strike, expiry, volatility, interest };
+    return OptionValues<value_type> { underlying, strike, expiry, volatility, interest, yield };
 }
 
 auto ArgParser::getOptionType() -> OptionType {
-    return (arguments_[Flag::OptionType] == "call") ?
-        OptionType::Call : OptionType::Put;
+    auto &input = arguments_[Flag::OptionType];
+    std::transform(input.begin(), input.end(), input.begin(), [](auto c) {
+            return std::tolower(c);
+    });
+    return (input.starts_with("c")) ? OptionType::Call : OptionType::Put;
 }
 
 auto ArgParser::parseDate(std::string_view date) const -> ArgParser::value_type {
-    // TODO RJW: Reimplement when libc++std 20 updated with 'from_stream'
-
     constexpr auto setToMidnight = [](std::tm &time) {
         time.tm_hour = 0;
         time.tm_min  = 0;
@@ -63,6 +65,7 @@ auto ArgParser::parseDate(std::string_view date) const -> ArgParser::value_type 
     std::tm inTime {};
     std::tm nowLocal = *std::localtime(&now);
 
+    // TODO RJW: Reimplement with 'from_stream' when libc++std 20 updated
     std::stringstream ss(date.data());
     ss >> std::get_time(&inTime, DATE_FMT);
     setToMidnight(inTime);
@@ -85,9 +88,6 @@ auto ArgParser::validateFlags(const Args &flags) -> bool {
         fullOpts.push_back(opt);
     }
 
-    const auto withinBase = [&](std::string_view arg) {
-        return std::find(baseOpts.begin(), baseOpts.end(), arg) != baseOpts.end();
-    };
     const auto withinAll  = [&](std::string_view arg) {
         return std::find(fullOpts.begin(), fullOpts.end(), arg) != fullOpts.end();
     };
@@ -95,21 +95,33 @@ auto ArgParser::validateFlags(const Args &flags) -> bool {
         return (arg == "-h" || arg == "--help");
     };
 
+    const auto hasInterest = [&](std::string_view arg) {
+        return (arg == "-r" || arg == "--rate-of-interest");
+    };
+    const auto hasVolatility = [&](std::string_view arg) {
+        return (arg == "-v" || arg == "--volatility");
+    };
+    const auto hasDividend = [&](std::string_view arg) {
+        return (arg == "-d" || arg == "--dividend");
+    };
+
     if (std::any_of(flags.begin(), flags.end(), withinHelp)) {
-        return true;
+        return false;
     }
-    else if (flags.size() == NUM_BASE_FLAGS) {
-        if (!std::all_of(flags.begin(), flags.end(), withinBase)) {
-            return false;
-        }
-        else {
-            arguments_[Flag::Interest] = std::to_string(INTEREST);
-            arguments_[Flag::Volatility] = std::to_string(IMPIED_VOL);
-        }
-    }
-    else if (flags.size() == NUM_ALL_FLAGS) {
+
+    if (flags.size() > NUM_BASE_FLAGS && flags.size() <= NUM_ALL_FLAGS){
         if (!std::all_of(flags.begin(), flags.end(), withinAll)) {
             return false;
+        }
+
+        if (!std::any_of(flags.begin(), flags.end(), hasInterest)) {
+            arguments_[Flag::Interest] = std::to_string(INTEREST);
+        }
+        if (!std::any_of(flags.begin(), flags.end(), hasVolatility)) {
+            arguments_[Flag::Volatility] = std::to_string(IMPLIED_VOL);
+        }
+        if (!std::any_of(flags.begin(), flags.end(), hasDividend)) {
+            arguments_[Flag::Dividend]   = std::to_string(YIELD);
         }
     }
     else {

@@ -16,7 +16,9 @@ TEST_CASE("Input interface to bsm binary", "[input]")
     SECTION("Verify all values correct with date")
     {
         const value_type daysOffset = 30;
-        const Args in { "-o", "call", "-u", "95", "-s", "100", "-t", getDateOffset(daysOffset), "-r", "0.02", "-v", "0.15" };
+        const Args in { "-o", "call", "-u", "95", "-s", "100", "-t", getDateOffset(daysOffset),
+            "-r", "0.02", "-v", "0.15", "-d", "0.10"
+        };
         parser.populateArgs(in);
 
         auto values = parser.getOptionValues();
@@ -25,6 +27,7 @@ TEST_CASE("Input interface to bsm binary", "[input]")
         REQUIRE(compareFloat(values.timeToExpiry_, daysOffset / DAY_TO_YEAR, DP3));
         REQUIRE(compareFloat(values.riskFreeInterest_, 0.02));
         REQUIRE(compareFloat(values.volatility_, 0.15));
+        REQUIRE(compareFloat(values.dividendYield_, 0.10));
     }
 
     SECTION("Verify default interest and volatiliity values with date")
@@ -38,7 +41,8 @@ TEST_CASE("Input interface to bsm binary", "[input]")
         REQUIRE(values.strikePrice_      == 100.0);
         REQUIRE(compareFloat(values.timeToExpiry_, daysOffset / DAY_TO_YEAR, DP3));
         REQUIRE(compareFloat(values.riskFreeInterest_, INTEREST));
-        REQUIRE(compareFloat(values.volatility_, IMPIED_VOL));
+        REQUIRE(compareFloat(values.volatility_,       IMPLIED_VOL));
+        REQUIRE(compareFloat(values.dividendYield_,    YIELD));
     }
 
     SECTION("Ensure already expired options are not handled")

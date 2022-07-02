@@ -7,8 +7,9 @@
 namespace bsm
 {
 
-static constexpr const auto IMPIED_VOL = 0.18;
-static constexpr const auto INTEREST   = 0.02;
+static constexpr const auto IMPLIED_VOL = 0.18;
+static constexpr const auto INTEREST    = 0.02;
+static constexpr const auto YIELD       = 0.00;
 
 static constexpr const auto DAY_TO_YEAR  = 365.00;
 static constexpr const auto HOUR_TO_DAY  = 24.00;
