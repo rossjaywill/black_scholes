@@ -19,7 +19,7 @@ TEST_CASE("Input interface to bsm binary", "[input]")
         const Args in { "-o", "call", "-u", "95", "-s", "100", "-t", getDateOffset(daysOffset),
             "-r", "0.02", "-v", "0.15", "-d", "0.10"
         };
-        parser.populateArgs(in);
+        REQUIRE(parser.populateArgs(in));
 
         auto values = parser.getOptionValues();
         REQUIRE(values.underlyingPrice_  == 95.0);
@@ -33,12 +33,12 @@ TEST_CASE("Input interface to bsm binary", "[input]")
     SECTION("Verify default interest and volatiliity values with date")
     {
         const value_type daysOffset = 14;
-        const Args in { "-o", "call", "-u", "95", "-s", "100", "-t", getDateOffset(daysOffset)};
-        parser.populateArgs(in);
+        const Args in { "-o", "call", "-u", "95.00", "-s", "100.00", "-t", getDateOffset(daysOffset) };
+        REQUIRE(parser.populateArgs(in));
 
         auto values = parser.getOptionValues();
-        REQUIRE(values.underlyingPrice_  == 95.0);
-        REQUIRE(values.strikePrice_      == 100.0);
+        REQUIRE(values.underlyingPrice_  == 95.00);
+        REQUIRE(values.strikePrice_      == 100.00);
         REQUIRE(compareFloat(values.timeToExpiry_, daysOffset / DAY_TO_YEAR, DP3));
         REQUIRE(compareFloat(values.riskFreeInterest_, INTEREST));
         REQUIRE(compareFloat(values.volatility_,       IMPLIED_VOL));
@@ -48,16 +48,16 @@ TEST_CASE("Input interface to bsm binary", "[input]")
     SECTION("Ensure already expired options are not handled")
     {
         const value_type daysOffset = -1;
-        const Args in { "-o", "call", "-u", "95", "-s", "100", "-t", getDateOffset(daysOffset)};
-        parser.populateArgs(in);
+        const Args in { "-o", "call", "-u", "95", "-s", "100", "-t", getDateOffset(daysOffset) };
+        REQUIRE(parser.populateArgs(in));
         REQUIRE_THROWS(parser.getOptionValues(), Contains("already expired"));
     }
 
     SECTION("Verify days to expiry cannot be greater than 10 years")
     {
         const value_type daysOffset = 11 * DAY_TO_YEAR;
-        const Args in { "-o", "call", "-u", "95", "-s", "100", "-t", getDateOffset(daysOffset)};
-        parser.populateArgs(in);
+        const Args in { "-o", "call", "-u", "95", "-s", "100", "-t", getDateOffset(daysOffset) };
+        REQUIRE(parser.populateArgs(in));
         REQUIRE_THROWS(parser.getOptionValues(), Contains("Time to expiry cannot be greater than"));
     }
 
@@ -65,7 +65,7 @@ TEST_CASE("Input interface to bsm binary", "[input]")
     {
         const value_type daysOffset = 6;
         const Args in { "-o", "call", "-u", "95", "-s", "100", "-t", getDateOffset(daysOffset), "-v", "0.18", "-r", "-0.3" };
-        parser.populateArgs(in);
+        REQUIRE(parser.populateArgs(in));
         REQUIRE_THROWS(parser.getOptionValues(), Contains("Decimal percentage"), Contains("less than zero"));
     }
 
@@ -73,7 +73,7 @@ TEST_CASE("Input interface to bsm binary", "[input]")
     {
         const value_type daysOffset = 11;
         const Args in { "-o", "call", "-u", "95", "-s", "100", "-t", getDateOffset(daysOffset), "-v", "0.18", "-r", "1.05" };
-        parser.populateArgs(in);
+        REQUIRE(parser.populateArgs(in));
         REQUIRE_THROWS(parser.getOptionValues(), Contains("Decimal percentage"), Contains("greater than one"));
     }
 
@@ -81,7 +81,7 @@ TEST_CASE("Input interface to bsm binary", "[input]")
     {
         const value_type daysOffset = 15;
         const Args in { "-o", "call", "-u", "95", "-s", "100", "-t", getDateOffset(daysOffset), "-v", "-0.18", "-r", "0.3" };
-        parser.populateArgs(in);
+        REQUIRE(parser.populateArgs(in));
         REQUIRE_THROWS(parser.getOptionValues(), Contains("Decimal percentage"), Contains("less than zero"));
     }
 
@@ -89,7 +89,7 @@ TEST_CASE("Input interface to bsm binary", "[input]")
     {
         const value_type daysOffset = 30;
         const Args in { "-o", "call", "-u", "95.00", "-s", "100", "-t", getDateOffset(daysOffset), "-v", "1.18", "-r", "0.99" };
-        parser.populateArgs(in);
+        REQUIRE(parser.populateArgs(in));
         REQUIRE_THROWS(parser.getOptionValues(), Contains("Decimal percentage"), Contains("greater than one"));
     }
 
@@ -97,7 +97,7 @@ TEST_CASE("Input interface to bsm binary", "[input]")
     {
         const value_type daysOffset = 15;
         const Args in { "-o", "call", "-u", "-1", "-s", "1.00", "-t", getDateOffset(daysOffset), "-v", "0.99", "-r", "0.3" };
-        parser.populateArgs(in);
+        REQUIRE(parser.populateArgs(in));
         REQUIRE_THROWS(parser.getOptionValues(), Contains("Price"), Contains("less than zero"));
     }
 
@@ -105,7 +105,7 @@ TEST_CASE("Input interface to bsm binary", "[input]")
     {
         const value_type daysOffset = 30;
         const Args in { "-o", "call", "-u", "100001.00", "-s", "100.00", "-t", getDateOffset(daysOffset), "-v", "0.01", "-r", "0.99" };
-        parser.populateArgs(in);
+        REQUIRE(parser.populateArgs(in));
         REQUIRE_THROWS(parser.getOptionValues(), Contains("Price"), Contains("greater than 100000"));
     }
 
@@ -113,7 +113,7 @@ TEST_CASE("Input interface to bsm binary", "[input]")
     {
         const value_type daysOffset = 15;
         const Args in { "-o", "call", "-u", "100.00", "-s", "-999.99", "-t", getDateOffset(daysOffset), "-v", "0.99", "-r", "0.3" };
-        parser.populateArgs(in);
+        REQUIRE(parser.populateArgs(in));
         REQUIRE_THROWS(parser.getOptionValues(), Contains("Price"), Contains("less than zero"));
     }
 
@@ -121,7 +121,7 @@ TEST_CASE("Input interface to bsm binary", "[input]")
     {
         const value_type daysOffset = 30;
         const Args in { "-o", "call", "-u", "95.00", "-s", "99999999.99", "-t", getDateOffset(daysOffset), "-v", "0.01", "-r", "0.99" };
-        parser.populateArgs(in);
+        REQUIRE(parser.populateArgs(in));
         REQUIRE_THROWS(parser.getOptionValues(), Contains("Price"), Contains("greater than 100000"));
     }
 }

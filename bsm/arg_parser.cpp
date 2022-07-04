@@ -109,8 +109,8 @@ auto ArgParser::validateFlags(const Args &flags) -> bool {
         return false;
     }
 
-    if (flags.size() > NUM_BASE_FLAGS && flags.size() <= NUM_ALL_FLAGS){
-        if (!std::all_of(flags.begin(), flags.end(), withinAll)) {
+    if (flags.size() >= NUM_BASE_FLAGS && flags.size() <= NUM_ALL_FLAGS){
+        if (!std::any_of(flags.begin(), flags.end(), withinAll)) {
             return false;
         }
 

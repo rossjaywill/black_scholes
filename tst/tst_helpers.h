@@ -14,7 +14,9 @@ namespace bsm
 using value_type = double;
 
 // Verify floating point values are equal to [precision] decimal places.
-static constexpr inline auto compareFloat(value_type lhs, value_type rhs, value_type precision = DP2) -> bool {
+static inline constexpr auto compareFloat(value_type lhs,
+                                          value_type rhs,
+                                          value_type precision = DP2) -> bool {
     return (std::fabs(lhs - rhs) <= precision);
 }
 

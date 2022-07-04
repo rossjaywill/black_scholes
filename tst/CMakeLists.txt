@@ -5,7 +5,6 @@ add_executable(
     main.cpp
     tst_black_scholes.cpp
     tst_greeks.cpp
-    tst_helpers.h
     tst_input.cpp
 )
 
@@ -13,6 +12,7 @@ target_include_directories(
     bsm_tests
     PUBLIC
     ${CMAKE_SOURCE_DIR}/include
+    ${CMAKE_SOURCE_DIR}/tst
 )
 
 target_sources(
