@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <iostream>
 #include <stdexcept>
+#include <fmt/core.h>
 
 #include "black_scholes.h"
 #include "constants.h"
@@ -154,6 +155,12 @@ public:
     inline constexpr auto theta() -> value_type { return greeks_.template theta<Executor>(); }
     inline constexpr auto vega()  -> value_type { return greeks_.vega(); }
     inline constexpr auto rho()   -> value_type { return greeks_.template rho<Executor>(); }
+
+    void printGreeks() {
+        fmt::print("\tΔ: {:.3f}\n\tΓ: {:.3f}\n\tΘ: {:.3f}\n\tν: {:.3f}\n\tρ: {:.3f}\n",
+                   delta(), gamma(), theta(), vega(), rho()
+        );
+    }
 
 private:
     OptionValues<value_type> values_;

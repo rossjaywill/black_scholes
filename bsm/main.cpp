@@ -41,11 +41,13 @@ auto main(int argc, char **argv) -> int {
 
         if (parser.getOptionType() == OptionType::Call) {
             Option<CallExecutor> call(std::move(optionValues));
-            fmt::print("Call Option Value: {}\n", call());
+            fmt::print("Call Option Value: {:.2f}\n", call());
+            call.printGreeks();
         }
         else {
             Option<PutExecutor> put(std::move(optionValues));
-            fmt::print("Put Option Value: {}\n", put());
+            fmt::print("Put Option Value: {:.2f}\n", put());
+            put.printGreeks();
         }
     }
     catch (const std::exception &e) {

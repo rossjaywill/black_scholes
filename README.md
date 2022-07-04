@@ -1,6 +1,5 @@
-# European Options - BSM
-Black Scholes Merton -
-Options Pricing
+# Black Scholes Merton
+European Options Pricing
 
 ### Usage
 ```
@@ -24,12 +23,12 @@ Optionally, if volatility, interest-rate, or dividend yield are omitted,
 Examples:
 
 Call option with defaulted volatility and rates:
-```
+```bash
 ./build/bin/bsm -o call -u 150 -s 100 -t 2022-07-30
 ```
 
 Put option with volatility and rates specified:
-```
+```bash
 ./build/bin/bsm -o put -u 35.75 -s 42.80 -t 2022-07-30 -r 0.03 -v 0.15 -d 0.05
 ```
 
@@ -81,16 +80,16 @@ Where:
 
 Thanks to:
 
-[^1]: Columbia University E4706: Foundations of Financial Engineering © 2016 by Martin Haugh:
-  http://www.columbia.edu/~mh2078/FoundationsFE/BlackScholes.pdf
+Columbia University E4706: Foundations of Financial Engineering © 2016 by Martin Haugh:
+> http://www.columbia.edu/~mh2078/FoundationsFE/BlackScholes.pdf
 
 and
-[^2]: quantpie.co.uk:
-  https://quantpie.co.uk/bsm_formula/bs_summary.php
+quantpie.co.uk:
+> https://quantpie.co.uk/bsm_formula/bs_summary.php
 
 For equation derivations.
 
-[^3]: MyStockPlan.com, Inc Copyright © 2000-2022 myStockPlan.com:
-  https://www.mystockoptions.com/black-scholes.cfm
+MyStockPlan.com, Inc Copyright © 2000-2022 myStockPlan.com:
+> https://www.mystockoptions.com/black-scholes.cfm
 
 For providing a tool to test against.

@@ -20,7 +20,7 @@ In order to avail of the above and build BSM, pre-requisite system dependencies 
 * pip (python pip package manager, required for Conan)
 
 This can be done on a debian based system with:
-```
+```bash
 sudo apt install -y gcc clang make cmake python3 python3-pip
 sudo pip install --user conan
 ```
@@ -29,7 +29,7 @@ sudo pip install --user conan
 
 Once the system dependencies are installed, the build can be run with:
 
-```
+```bash
 ./build.sh    # build release variant
 ./build.sh -d # build debug variant
 ./build.sh -u # build with unit tests
@@ -37,7 +37,7 @@ Once the system dependencies are installed, the build can be run with:
 ./build.sh -c # clean build artefacts
 ```
 All build flags:
-```
+```bash
   -d | --debug          Debug build
   -t | --toolchain      Specify which compiler toolchain to use (gcc/clang)
   -i | --install-deps   Install conan dependencies before building
@@ -51,7 +51,7 @@ All build flags:
 
 Common issues include:
 1. If switching toolchains/variants you may run into an issue where conan dependencies do not have ABI with your current build:
-```
+```bash
 -- Current conanbuildinfo.cmake directory: /home/rjw/code/black_scholes/build
 CMake Error at build/conanbuildinfo.cmake:804 (message):
   Incorrect 'clang', is not the one detected by CMake: 'GNU'
