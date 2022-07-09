@@ -6,6 +6,8 @@
 #include <cmath>
 #include <stdexcept>
 
+#include <iostream>
+
 namespace bsm
 {
 

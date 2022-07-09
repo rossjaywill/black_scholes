@@ -30,6 +30,7 @@ sudo pip install --user conan
 Once the system dependencies are installed, the build can be run with:
 
 ```bash
+mkdir build
 ./build.sh    # build release variant
 ./build.sh -d # build debug variant
 ./build.sh -u # build with unit tests

@@ -64,8 +64,6 @@ public:
     auto getNumberArgs() const -> size_t { return arguments_.size(); }
 
 private:
-    // Parse input dates in format: 'YYYY-mm-dd' as time to expiry in years
-    auto parseDate(std::string_view date) const -> value_type;
     auto validateFlags(const Args &flags) -> bool;
 
     OptionMap arguments_;

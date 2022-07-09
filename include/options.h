@@ -17,13 +17,14 @@ enum class OptionType
 {
     Call,
     Put,
+    None,
 };
 
 template <typename value_type>
 struct OptionValues
 {
 public:
-    OptionValues() = default;
+    OptionValues() = delete;
     explicit OptionValues(value_type underlying   = 0.0,
                           value_type strike       = 0.0,
                           value_type time         = 0.0,
@@ -156,9 +157,13 @@ public:
     inline constexpr auto vega()  -> value_type { return greeks_.vega(); }
     inline constexpr auto rho()   -> value_type { return greeks_.template rho<Executor>(); }
 
-    void printGreeks() {
-        fmt::print("\tΔ: {:.3f}\n\tΓ: {:.3f}\n\tΘ: {:.3f}\n\tν: {:.3f}\n\tρ: {:.3f}\n",
-                   delta(), gamma(), theta(), vega(), rho()
+    void printGreeks(const bool singleLine = false) {
+        std::string_view endl = "\n";
+        if (singleLine) {
+            endl = ", ";
+        }
+        fmt::print("Δ: {:.3f}{}Γ: {:.3f}{}Θ: {:.3f}{}ν: {:.3f}{}ρ: {:.3f}\n",
+                   delta(), endl, gamma(), endl, theta(), endl, vega(), endl, rho()
         );
     }
 
