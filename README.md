@@ -22,14 +22,19 @@ Optionally, if volatility, interest-rate, or dividend yield are omitted,
 
 Examples:
 
+Running by passing csv as standard in:
+```bash
+cat tst/input/bsm.csv | ./build/bin/bsm
+```
+
 Call option with defaulted volatility and rates:
 ```bash
-./build/bin/bsm -o call -u 150 -s 100 -t 2022-07-30
+bsm -o call -u 150 -s 100 -t 2022-07-30
 ```
 
 Put option with volatility and rates specified:
 ```bash
-./build/bin/bsm -o put -u 35.75 -s 42.80 -t 2022-07-30 -r 0.03 -v 0.15 -d 0.05
+bsm -o put -u 35.75 -s 42.80 -t 2022-07-30 -r 0.03 -v 0.15 -d 0.05
 ```
 
 

@@ -1,2 +1,6 @@
 option_type,underlying_price,strike_price,expiry_time,interest_rate,implied_volatility,dividend_yield,
-call,150.00,100.00,2022-07-30,0.1,0.02,0.04,
+call,150.00,100.00,2023-09-30,0.1,0.02,0.04,
+put,150.00,100.00,2023-09-30,0.1,0.02,0.04,
+call,75.10,90.75,2023-09-30,0.15,0.04,0.03,
+put,75.10,90.75,2023-09-30,0.15,0.04,0.03,
+
