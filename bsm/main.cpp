@@ -32,24 +32,32 @@ auto main(int argc, char **argv) -> int {
     try {
         fmt::print("Running black scholes merton\n");
 
-        const Args params { argv + 1, argv + argc };
-        if (!parser.populateArgs(params)) {
-            helpAndExit(EXIT_FAILURE);
-        }
-
-        auto optionValues = parser.getOptionValues();
-
-        if (parser.getOptionType() == OptionType::Call) {
-            Option<CallExecutor> call(std::move(optionValues));
-            fmt::print("Call Option Value: {:.2f}\n", call());
-            call.printGreeks();
+        if (std::cin) {
+            for (std::string stdin; std::getline(std::cin, stdin);) {
+                fmt::print("std in proved: {}\n", stdin);
+            }
         }
         else {
-            Option<PutExecutor> put(std::move(optionValues));
-            fmt::print("Put Option Value: {:.2f}\n", put());
-            put.printGreeks();
+            const Args params { argv + 1, argv + argc };
+            if (!parser.populateArgs(params)) {
+                helpAndExit(EXIT_FAILURE);
+            }
+
+            auto optionValues = parser.getOptionValues();
+
+            if (parser.getOptionType() == OptionType::Call) {
+                Option<CallExecutor> call(std::move(optionValues));
+                fmt::print("Call Option Value: {:.2f}\n", call());
+                call.printGreeks();
+            }
+            else {
+                Option<PutExecutor> put(std::move(optionValues));
+                fmt::print("Put Option Value: {:.2f}\n", put());
+                put.printGreeks();
+            }
         }
     }
+
     catch (const std::exception &e) {
         fmt::print("Exeception caught during bsm run:\n{}\n", e.what());
         helpAndExit(EXIT_FAILURE);
