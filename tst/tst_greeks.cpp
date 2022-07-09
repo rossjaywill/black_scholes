@@ -57,6 +57,7 @@ TEST_CASE("Greek calculations derived from ITM CALL and OTM PUTs", "[itm_greeks]
         Option<PutExecutor> option(std::move(input));
         REQUIRE(compareFloat(option.vega(), 32.240, DP3));
     }
+
     SECTION("ITM one year expiry CALL rho")
     {
         Option<CallExecutor> option(std::move(input));

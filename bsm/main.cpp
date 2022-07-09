@@ -3,6 +3,7 @@
 
 #include "arg_parser.h"
 #include "constants.h"
+#include "input_reader.h"
 #include "options.h"
 
 using namespace bsm;
@@ -33,8 +34,26 @@ auto main(int argc, char **argv) -> int {
         fmt::print("Running black scholes merton\n");
 
         if (std::cin) {
-            for (std::string stdin; std::getline(std::cin, stdin);) {
-                fmt::print("std in proved: {}\n", stdin);
+            InputReader reader(Format::CSV);
+
+            for (std::string stdin; std::getline(std::cin, stdin); ) {
+                auto [type, values] = reader.getOptionValues(stdin);
+                if (type == OptionType::Call) {
+                    fmt::print("underlying values passed to opt calc: {}\n", values.underlyingPrice_);
+                    fmt::print("strike values passed to opt calc: {}\n", values.strikePrice_);
+                    fmt::print("time values passed to opt calc: {}\n", values.timeToExpiry_);
+                    fmt::print("vol values passed to opt calc: {}\n", values.volatility_);
+                    fmt::print("risk values passed to opt calc: {}\n", values.riskFreeInterest_);
+                    fmt::print("divid values passed to opt calc: {}\n", values.dividendYield_);
+                    Option<CallExecutor> call(std::move(values));
+                    fmt::print("Call Option Value: {:.2f} ", call());
+                    call.printGreeks();
+                }
+                else if (type == OptionType::Put){
+                    Option<PutExecutor> put(std::move(values));
+                    fmt::print("Put Option Value: {:.2f}\n", put());
+                    put.printGreeks();
+                }
             }
         }
         else {
@@ -44,13 +63,13 @@ auto main(int argc, char **argv) -> int {
             }
 
             auto optionValues = parser.getOptionValues();
-
-            if (parser.getOptionType() == OptionType::Call) {
+            const auto type = parser.getOptionType();
+            if (type == OptionType::Call) {
                 Option<CallExecutor> call(std::move(optionValues));
                 fmt::print("Call Option Value: {:.2f}\n", call());
                 call.printGreeks();
             }
-            else {
+            else if (type == OptionType::Put) {
                 Option<PutExecutor> put(std::move(optionValues));
                 fmt::print("Put Option Value: {:.2f}\n", put());
                 put.printGreeks();
