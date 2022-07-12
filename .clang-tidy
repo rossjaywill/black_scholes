@@ -3,6 +3,8 @@ Checks: >-
   bugprone-*,
   -bugprone-suspicious-include,
   -bugprone-use-after-move,
+  cert-*,
+  clang-analyzer-*,
   cppcoreguidelines-*,
   -cppcoreguidelines-avoid-magic-numbers,
   -cppcoreguidelines-no-malloc,
@@ -23,6 +25,7 @@ Checks: >-
 WarningsAsErrors: >-
   clang-analyzer-*,
   clang-diagnostic-*,
+  hicpp-*,
   performance-*,
   readability-identifier-naming
 UseColor: true

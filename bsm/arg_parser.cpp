@@ -8,7 +8,7 @@ namespace bsm
 auto ArgParser::populateArgs(const Args &params) -> bool {
     Args flags;
     for (const auto &param : params) {
-        if (param.find_first_of("-") == 0) {
+        if (param.find_first_of('-') == 0) {
             flags.push_back(param);
         }
     }

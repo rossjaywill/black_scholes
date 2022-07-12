@@ -134,8 +134,18 @@ public:
     {}
     ~Option() = default;
 
-    auto operator=(const Option &rhs) -> Option& { this->values_ = rhs.values_; return *this; }
-    auto operator=(Option &&rhs) -> Option& { this->values_ = std::move(rhs.values_); return *this; }
+    auto operator=(const Option &rhs) -> Option& {
+        if (this != *rhs) {
+            this->values_ = rhs.values_;
+        }
+        return *this;
+    }
+    auto operator=(Option &&rhs) noexcept -> Option& {
+        if (this != *rhs) {
+            this->values_ = std::move(rhs.values_);
+        }
+        return *this;
+    }
 
     inline constexpr auto operator()() const {
         Executor invoker;
