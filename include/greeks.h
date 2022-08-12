@@ -100,7 +100,7 @@ public:
 private:
     // Standard Normal Density
     // i.e. first derivative of Cumulative Normal Distribution
-    inline constexpr auto standardNormalDensity(value_type coefficient) {
+    constexpr auto standardNormalDensity(value_type coefficient) {
         return ((1 / std::sqrt(2 * M_PI)) * std::exp(-0.5 * std::pow(coefficient, 2)));
     }
 

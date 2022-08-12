@@ -46,6 +46,7 @@ All build flags:
   -r | --rebuild        Clean build artefacts before fully rebuilding
   -u | --unittest       Run all BSM unit tests after building
   -ct| --clang-tidy     Enable clang-tidy static analysis checks. Will only run if building (i.e. source changed, '-r', or first build)
+  -cc| --cppcheck       Enable cppcheck static analysis checks. Will only run if building (i.e. source changed, '-r', or first build)
   -h | --help           Display this help message
 ```
 ### Troubleshooting

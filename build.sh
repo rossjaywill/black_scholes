@@ -16,6 +16,7 @@ function usage() {
     -r | --rebuild        Clean build artefacts before fully rebuilding
     -u | --unittest       Run all BSM unit tests after building
     -ct| --clang-tidy     Enable clang-tidy static analysis checks. Will only run if building (i.e. source changed, '-r', or first build)
+    -cc| --cppcheck          Enable cppcheck static analysis checks. Will only run if building (i.e. source changed, '-r', or first build)
     -h | --help           Display this help message
   "
 }
@@ -60,7 +61,8 @@ function build() {
 
   cmake -S ${ROOT} -B ${BUILD_DIR} -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" \
       -DCMAKE_CXX_COMPILER=${CXX} \
-      -DCLANG_TIDY=${CLANG_TIDY}
+      -DCLANG_TIDY=${CLANG_TIDY} \
+      -DCPPCHECK=${CPPCHECK}
 
   cmake --build ${BUILD_DIR} -- -j${threads}
 
@@ -137,7 +139,11 @@ function parse_args() {
         export CLANG_TIDY=true
         shift
         ;;
-      -h|--help|*)
+      -cc|--cppcheck)
+        echo "-- Enabling cppcheck static analysis. --"
+        export CPPCHECK=true
+        shift
+        ;;      -h|--help|*)
         usage
         exit 1
         ;;
