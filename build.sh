@@ -2,8 +2,6 @@
 
 ROOT=${PWD}
 BUILD_DIR=${ROOT}/build
-TST_DIR=${ROOT}/tst
-TST_BUILD=${BUILD_DIR}/tst
 
 NAME="black_scholes"
 
@@ -15,6 +13,7 @@ function usage() {
     -c | --clean          Clean build artefacts
     -r | --rebuild        Clean build artefacts before fully rebuilding
     -u | --unittest       Run all BSM unit tests after building
+    -a | --asan           Enable address sanitizer
     -ct| --clang-tidy     Enable clang-tidy static analysis checks. Will only run if building (i.e. source changed, '-r', or first build)
     -cc| --cppcheck          Enable cppcheck static analysis checks. Will only run if building (i.e. source changed, '-r', or first build)
     -h | --help           Display this help message
@@ -22,22 +21,22 @@ function usage() {
 }
 
 function clean() {
-  rm -rf ${BUILD_DIR}
+  rm -rf "${BUILD_DIR}"
 }
 
 function install_deps() {
-  [[ ! -d ${BUILD_DIR} ]] && mkdir -p ${BUILD_DIR}
+  [[ ! -d "${BUILD_DIR}" ]] && mkdir -p "${BUILD_DIR}"
 
-  pushd ${BUILD_DIR} > /dev/null
-  conan install ${ROOT}/conanfile.txt --build -s compiler=${CCOMPILER} -s compiler.version=${CVERSION}
-  popd > /dev/null
+  pushd "${BUILD_DIR}" > /dev/null || return
+  conan install "${ROOT}"/conanfile.txt --build -s compiler="${CCOMPILER}" -s compiler.version="${CVERSION}"
+  popd > /dev/null || return
 }
 
 function set_compile_link() {
   if [[ ! -e ${ROOT}/compile_commands.json ]]; then
     # Symlink compile_commands.json artefact to project ROOT
     # This sets LSP definitions for clangd.
-    ln -s ${BUILD_DIR}/compile_commands.json ${ROOT}
+    ln -s "${BUILD_DIR}"/compile_commands.json "${ROOT}"
   fi
 }
 
@@ -56,21 +55,24 @@ function build() {
     install_deps
   fi
 
-  local threads=$(nproc)
-  [[ -z threads ]] && threads=1
+  local threads
+  threads=$(nproc)
+  [[ -z $threads && $threads != " " ]] && threads=1
 
-  cmake -S ${ROOT} -B ${BUILD_DIR} -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" \
-      -DCMAKE_CXX_COMPILER=${CXX} \
-      -DCLANG_TIDY=${CLANG_TIDY} \
-      -DCPPCHECK=${CPPCHECK}
+  cmake -S "${ROOT}" -B "${BUILD_DIR}" \
+      -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" \
+      -DCMAKE_CXX_COMPILER="${CXX}" \
+      -DASAN="${ASAN}" \
+      -DCLANG_TIDY="${CLANG_TIDY}" \
+      -DCPPCHECK="${CPPCHECK}"
 
-  cmake --build ${BUILD_DIR} -- -j${threads}
+  cmake --build "${BUILD_DIR}" -- "-j${threads}"
 
   set_compile_link
 }
 
 function unit_test() {
-  [[ ${UNITTEST} == true ]] && ${BUILD_DIR}/bin/bsm_tests
+  [[ ${UNITTEST} == true ]] && "${BUILD_DIR}"/bin/bsm_tests
 }
 
 function set_base_env() {
@@ -79,7 +81,9 @@ function set_base_env() {
   export CCOMPILER="gcc"
   export CVERSION="11.2"
   export UNITTEST=false
+  export ASAN=false
   export CLANG_TIDY=false
+  export CPPCHECK=false
 }
 
 function clear_env() {
@@ -88,7 +92,9 @@ function clear_env() {
   unset CCOMPILER
   unset CVERSION
   unset UNITTEST
+  unset ASAN
   unset CLANG_TIDY
+  unset CPPCHECK
 }
 
 function parse_args() {
@@ -134,6 +140,11 @@ function parse_args() {
         export UNITTEST=true
         shift
         ;;
+      -a|--asan)
+        echo "-- Enabling address sanitizer. --"
+        export ASAN=true
+        shift
+        ;;
       -ct|--clang-tidy)
         echo "-- Enabling clang-tidy static analysis. --"
         export CLANG_TIDY=true
@@ -153,7 +164,7 @@ function parse_args() {
 
 
 set_base_env
-parse_args $@
+parse_args "$@"
 set_build_env
 build
 unit_test

@@ -14,36 +14,8 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -std=c++20 -Og -ggdb -Wall -Wextra -pedantic -Werror")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -std=c++20 -O3 -Wall -Wextra -pedantic -Werror")
 
-if (CLANG_TIDY)
-    find_program(
-        CLANG_TIDY_EXE
-        NAMES clang-tidy clang-tidy-11 clang-tidy14
-    )
-    if (NOT CLANG_TIDY_EXE)
-        message(STATUS "Clang tidy enabled, but bin not found. Skipping")
-    else()
-        message(STATUS "Clang tidy enabled")
-        set(CMAKE_CXX_CLANG_TIDY clang-tidy)
-    endif()
-else()
-    message(STATUS "Clang tidy not enabled")
-endif()
-
-if (CPPCHECK)
-    find_program(
-        CPPCHECK_EXE
-        NAMES cppcheck
-    )
-    if (NOT CPPCHECK_EXE)
-        message(STATUS "Cppcheck enabled, but bin not found. Skipping")
-    else()
-        message(STATUS "Cppcheck tidy enabled")
-        set(CMAKE_CXX_CPPCHECK cppcheck)
-    endif()
-else()
-    message(STATUS "Cppcheck not enabled")
-endif()
-
+include(cmake/clangtidy.cmake)
+include(cmake/cppcheck.cmake)
 
 add_subdirectory(tst)
 
@@ -65,8 +37,9 @@ target_include_directories(
     include
 )
 
+include(cmake/pch.cmake)
+
 target_link_libraries(bsm ${CONAN_LIBS})
 target_compile_features(bsm PUBLIC cxx_std_20)
 
-add_compile_options(-fsanitize=address)
-add_link_options(-fsanitize=address)
+include(cmake/asan.cmake)

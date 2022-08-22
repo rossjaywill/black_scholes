@@ -28,7 +28,7 @@ static auto dateToString(std::tm &time) -> std::string {
 }
 
 // Get current date as YYYY-mm-dd format
-static auto getCurrentDate() -> std::string {
+[[maybe_unused]] static auto getCurrentDate() -> std::string {
     auto current = std::time(nullptr);
     auto local   = *std::localtime(&current);
 
@@ -36,7 +36,7 @@ static auto getCurrentDate() -> std::string {
 }
 
 // Get date as offset in days from current date
-static auto getDateOffset(value_type days) -> std::string {
+[[maybe_unused]] static auto getDateOffset(value_type days) -> std::string {
     auto current = std::time(nullptr);
     auto local   = *std::localtime(&current);
 
